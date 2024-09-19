@@ -162,8 +162,8 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 ## CEF
 
 * Cisco Express Forwarding (CEF) / fast path
-* software CEF
-* hardware CEF
+* [software CEF](#software-cef)
+* [hardware CEF](#hardware-cef)
   * ASIC
   * TCAM (Tenary CAM)
   * NPU
