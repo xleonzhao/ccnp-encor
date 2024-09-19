@@ -14,7 +14,7 @@
 
 ## Part I - Forwarding
 
-* Chapter 1: Packet Forwarding
+* Chapter 1: [Packet Forwarding](./forwarding.md)
 
 ## Part II - Layer 2
 

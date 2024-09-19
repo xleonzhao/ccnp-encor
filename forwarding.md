@@ -135,7 +135,7 @@ show interfaces status
 
 # Layer-3 forwarding
 
-* ARP: IP <-> MAC
+* ARP: IP addr -> MAC addr
 ```
 show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 ```
@@ -152,9 +152,7 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
     * extra info needed, e.g., unresolved ARP entries
 ![](img/2024-09-18-11-24-30.png)
 
-* Cisco Express Forwarding (CEF) / fast path
-
-## Data strcutures
+### Data structures
 
 * RIB
   * to find next hop IP address and outgoing interface
@@ -163,6 +161,7 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 
 ## CEF
 
+* Cisco Express Forwarding (CEF) / fast path
 * software CEF
 * hardware CEF
   * ASIC
@@ -201,3 +200,14 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 ### Hardware CEF
 
 * NPU: Unlike ASICs, **NPUs are programmable**, and their firmware can be changed with relative ease.
+
+### SDM templates
+
+* `[show] sdm prefer {vlan | advanced}`
+  * then restart switch w/ `reload`
+* Every switch in a switch stack must be configured with the same SDM template.
+
+# Command reference
+
+![](img/2024-09-19-06-59-35.png)
+![](img/2024-09-19-06-59-55.png)
