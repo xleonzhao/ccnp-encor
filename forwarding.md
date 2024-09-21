@@ -26,6 +26,7 @@
 | PC A's mac address | port N where A connects to |
 
 * in case there is an unknown MAC address, switch will do broadcast to every port, called `unknown unicast flooding`
+* src MAC addr/dst MAC addr will not be changed by switches/bridges/hubs
 
 ```
 show mac address-table [address mac-address | dynamic | vlan vlan-id]
@@ -41,6 +42,11 @@ show mac address-table [address mac-address | dynamic | vlan vlan-id]
 mac address-table static mac-address vlan vlan-id {drop | interface interface-id}
 clear mac address-table dynamic [{address mac-address | interface interface-id | vlan vlan-id}]
 ```
+
+### Timer ?
+
+* age timer
+  * default: 300s
 
 ## VLAN
 
@@ -207,7 +213,3 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
   * then restart switch w/ `reload`
 * Every switch in a switch stack must be configured with the same SDM template.
 
-# Command reference
-
-![](img/2024-09-19-06-59-35.png)
-![](img/2024-09-19-06-59-55.png)
