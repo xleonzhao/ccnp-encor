@@ -18,10 +18,10 @@
 
 ## Part II - Layer 2
 
-* Chapter 2: Spanning Tree Protocol
-* Chapter 3: Advanced STP Tuning
-* Chapter 4: Multiple Spanning Tree Protocol
-* Chapter 5: VLAN Trunks and EtherChannel Bundles
+* Chapter 2: [Spanning Tree Protocol](./02-04-STP.md#ch-2-stp)
+* Chapter 3: [Advanced STP Tuning](./02-04-STP.md#ch-3-advanced-stp-tunning)
+* Chapter 4: [Multiple Spanning Tree Protocol](./02-04-STP.md#ch-4-multiple-spanning-tree-protocol)
+* Chapter 5: [VLAN Trunks and EtherChannel Bundles](./05-vlan-trunk-etherchannel.md)
 
 ## Part III - Routing
 
