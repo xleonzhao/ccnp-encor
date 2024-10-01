@@ -84,7 +84,7 @@ SW1(config-if)# switchport access vlan 99
 
 ### Trunk Ports
 
-* Trunk ports can carry multiple VLANs.
+* Trunk ports can **carry** multiple VLANs.
 * Trunk ports are typically used when multiple VLANs need connectivity between a switch and another switch, router, or firewall and use only one port. 
 * Upon receipt of the packet on the remote trunk link, the headers are examined,  traffic is associated to the proper VLAN, then the 802.1Q headers are removed, traffic is forwarded to the next port, based on the MAC address for that VLAN.
 * *LZ: trunk ports see untagged coming in, let untagged coming out?*
