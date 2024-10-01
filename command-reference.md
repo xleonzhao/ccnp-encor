@@ -1,6 +1,7 @@
 - [ch. 1 forwarding](#ch-1-forwarding)
 - [ch. 2 SPT](#ch-2-spt)
 - [ch. 3 advanced SPT tunning](#ch-3-advanced-spt-tunning)
+- [ch. 4 Multiple Spanning Tree Protocol](#ch-4-multiple-spanning-tree-protocol)
 
 # ch. 1 forwarding
 
@@ -14,3 +15,7 @@
 # ch. 3 advanced SPT tunning
 
 ![](img/2024-09-21-13-04-05.png)
+
+# ch. 4 Multiple Spanning Tree Protocol
+
+![](img/2024-10-01-11-48-10.png)
