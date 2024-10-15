@@ -139,6 +139,10 @@ show interfaces gi1/0/5 switchport
 show interfaces status
 ```
 
+## Lab
+
+* [vlan and trunk](./lab-vlan.md)
+
 # Layer-3 forwarding
 
 * ARP: IP addr -> MAC addr
@@ -209,6 +213,7 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 
 ### SDM templates
 
+> The allocation ratios between the various TCAM tables are stored and can be modified with Switching Database Manager (SDM) templates.
 * `[show] sdm prefer {vlan | advanced}`
   * then restart switch w/ `reload`
 * Every switch in a switch stack must be configured with the same SDM template.

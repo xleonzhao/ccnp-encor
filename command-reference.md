@@ -3,6 +3,7 @@
 - [ch. 3 advanced SPT tunning](#ch-3-advanced-spt-tunning)
 - [ch. 4 Multiple Spanning Tree Protocol](#ch-4-multiple-spanning-tree-protocol)
 - [ch. 5 VLAN Trunks and EtherChannel](#ch-5-vlan-trunks-and-etherchannel)
+- [ch. 6 IP Routing Essentials](#ch-6-ip-routing-essentials)
 
 # ch. 1 forwarding
 
@@ -24,3 +25,7 @@
 # ch. 5 VLAN Trunks and EtherChannel
 
 ![](img/2024-10-01-15-19-50.png)
+
+# ch. 6 IP Routing Essentials
+
+![](img/2024-10-15-16-05-16.png)

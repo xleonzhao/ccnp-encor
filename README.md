@@ -72,3 +72,4 @@
 * Chapter 30: Final Preparation
 * Chapter 31: ENCOR 350-401 Exam Updates
 * [command references](./command-reference.md)
+* [exam planer](./planner.md)
