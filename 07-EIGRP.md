@@ -89,7 +89,7 @@ $$
 * 10us delay will dominate the metric when if bw goes beyond 10G
 
 $$
-Wide Metric = 65,536 * [(\frac{K_1*10^7}{min. BW} + \frac{\frac{K_2*10^7}{min. BW}}{256-Load} + \frac{K_3*Latency}{10^{-6}} + K_6 * Extended) * \frac{K_5}{K_4+Reliability}]
+Wide Metric = 65,536 * [(\frac{K_1 * 10^7}{min. BW} + \frac{\frac{K_2 * 10^7}{min. BW}}{256-Load} + \frac{K_3 * Latency}{10^{-6}} + K_6 * Extended) * \frac{K_5}{K_4+Reliability}]
 $$
 
 * Latency is the total interface delay measured in picoseconds ($10^{–12}$) instead of measuring in microseconds ($10^{–6}$)

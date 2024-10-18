@@ -24,11 +24,11 @@
 
 ## Part III - Routing
 
-* Chapter 6: IP Routing Essentials
-* Chapter 7: EIGRP
-* Chapter 8: OSPF
-* Chapter 9: Advanced OSPF
-* Chapter 10: OSPFv3
+* Chapter 6: [IP Routing Essentials](./06-routing-basics.md)
+* Chapter 7: [EIGRP](./07-EIGRP.md)
+* Chapter 8: [OSPF](./08-10-OSPF.md)
+* Chapter 9: [Advanced OSPF](./08-10-OSPF.md)
+* Chapter 10: [OSPFv3](./08-10-OSPF.md)
 * Chapter 11: BGP
 * Chapter 12: Advanced BGP
 * Chapter 13: Multicast

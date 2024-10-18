@@ -14,7 +14,7 @@
   - [Recursive static routes](#recursive-static-routes)
   - [Fully specified static routes](#fully-specified-static-routes)
   - [Floating static routing](#floating-static-routing)
-  - [Static route to NULL if](#static-route-to-null-if)
+  - [Static route to NULL](#static-route-to-null)
   - [IPv6 static routes](#ipv6-static-routes)
 - [Policy-Based Routing](#policy-based-routing)
 - [Virtual Routing and Forwarding (VRF)](#virtual-routing-and-forwarding-vrf)
@@ -182,7 +182,7 @@ R1(config)# ip route 10.22.22.0 255.255.255.0 Serial 1/0 210
 ! use `sh ip route 10.22.22.0 to check AD (as "distance")
 ```
 
-## Static route to NULL if
+## Static route to NULL
 
 * drop packets w/o involving CPU
 * avoiding routing loops, e.g.:
