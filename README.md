@@ -29,9 +29,9 @@
 * Chapter 8: [OSPF](./08-10-OSPF.md)
 * Chapter 9: [Advanced OSPF](./08-10-OSPF.md)
 * Chapter 10: [OSPFv3](./08-10-OSPF.md)
-* Chapter 11: BGP
-* Chapter 12: Advanced BGP
-* Chapter 13: Multicast
+* Chapter 11: [BGP](./11-12-BGP.md)
+* Chapter 12: [Advanced BGP]((./11-12-BGP.md))
+* Chapter 13: [Multicast](./13-multicast.md)
 
 ## Part IV - Services
 
