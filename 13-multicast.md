@@ -391,4 +391,4 @@
 * BSR sends all mapping to all PIM routers every 60s
   * no selection of best PP
   * leaves it to router
-* 
+* each router runs the same hash algorithm to select RP
