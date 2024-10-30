@@ -9,6 +9,7 @@
 - [ch. 10 OSPFv3](#ch-10-ospfv3)
 - [ch. 11 BGP](#ch-11-bgp)
 - [ch. 12 advanced BGP](#ch-12-advanced-bgp)
+- [ch. 14 QoS](#ch-14-qos)
 
 # ch. 1 forwarding
 
@@ -56,3 +57,7 @@
 ![](img/2024-10-23-10-45-15.png)
 ![](img/2024-10-23-10-45-32.png)
 
+# ch. 14 QoS
+
+![](img/2024-10-30-11-08-57.png)
+![](img/2024-10-30-11-09-23.png)

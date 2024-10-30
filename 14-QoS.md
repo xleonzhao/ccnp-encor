@@ -172,7 +172,7 @@ class-map match-all HTTP-WEB-IMAGES
 * Layer 2.5: MPLS experimental (EXP) bits
 * Layer 3: Differentiated Services Code Points (DSCP) and IP Precedence (IPP)
 
-#### layer 2 marking, CoS
+#### layer 2 marking: CoS
 
 * inside 802.1q header
 * TCI field: PCP (3b), DEI (1b), VlanID (12b)
@@ -188,7 +188,7 @@ class-map match-all HTTP-WEB-IMAGES
     * 1: drop eligible.
   * can be used independently or in conjunction with PCP
 
-#### layer 3 marking, DSCP
+#### layer 3 marking: DSCP
 
 ![](img/2024-10-28-11-26-37.png)
 
@@ -261,7 +261,7 @@ class-map match-all HTTP-WEB-IMAGES
 
 > QoS groups are used to mark packets as they are received and processed internally within the router and are automatically removed when packets egress the router. They are used only in special cases in which traffic descriptors marked or received on an ingress interface would not be visible for packet classification on egress interfaces due to encapsulation or de-encapsulation.
 
-### Trust boundary
+### trust boundary
 
 * PC can mark their packets with DSCP, will switch trust it?
 * IP telephony endpoint may do it
@@ -295,4 +295,322 @@ policy-map INBOUND-MARKING-POLICY
 
 ![](img/2024-10-28-14-50-41.png)
 
+### placement
+
+* policer
+  * inbound policer at edge
+  * outbound at edge or core-facing
+* shaper
+  * ISP-facing interface
+    * ISP may police traffic or have max-rate SLA
+
+### Markdown
+
+* to a lower priority
+* congestion avoidance algorithms should be configured throughout the network
+
+> for example, excess traffic marked with AFx1 should be marked down to AFx2 (or AFx3 if using two-rate policing). After marking down the traffic, congestion-avoidance mechanisms, such as DSCP-based weighted random early detection (WRED), should be configured throughout the network to drop AFx3 more aggressively than AFx2 and drop AFx2 more aggressively than AFx1.
+
+### Token Bucket Algorithms
+
+* used by policer and shaper
+* terms
+  * Committed Information Rate (_CIR_): The policed traffic rate (**bps**), defined in the traffic contract.
+  * Committed Time Interval (_Tc_): The time interval, in milliseconds (ms), over which the committed burst (Bc) is sent. 
+    * $Tc = (Bc / CIR ) × 1000$
+    * 8ms < _Tc_ < 125ms
+      * with fast link speed, tokens will be burned out quickier than refilled
+      * if _Tc_ too large, packets have to wait longer til bucket got refilled 
+  * Committed Burst Size (_Bc_): The maximum size of the CIR token bucket, measured in **bytes**, and the maximum amount of traffic that can be sent within a Tc. 
+    * $Bc = CIR * (Tc / 1000)$
+    * _Bc_ >= largest possible IP packet size
+  * Token: 8 bits
+  * Token bucket: A bucket that accumulates tokens 
+    * maximum number of tokens: _Bc_ when using a single token bucket
+    * tokens are added into the bucket at a fixed rate (the _CIR_)
+* If there are not enough tokens in the token bucket to send the packet, the traffic conditioning mechanism can take one of the following actions:
+  * Buffer the packets while waiting for enough tokens to accumulate in the token bucket (traffic shaping)
+  * Drop the packets (traffic policing)
+  * Mark down the packets (traffic markdown)
+
+![](img/2024-10-29-10-32-22.png)
+
+* Time interval at line rate = (Bc [bits] / Interface speed [bps]) × 1000
+  * Bc = 12Mbps
+  * IF speed = 1Gbps
+  * CIR = 120Mbps
+  * packet size = 1500B = 12Kb
+* within a _Bc_/_Tc_, only 1000 packets can be sent til all tokens burned 
+  * assuming a continuous stream of 1500B/packet
+
+### Policer Config
+
+```
+police [cir] <cir-in-bps> [bc] <committed-burst-size-in-bytes>
+[be] <excess-burst-size-in-bytes> [conform-action <action>] 
+[exceed-action <action>] [violate-action <action>]
+```
+
+![](img/2024-10-29-10-49-39.png)
+
+### Policer Types
+
+#### Single-rate two-color marker/policer
+
+```
+policy-map OUTBOUND-POLICY
+    class VOIP-TELEPHONY
+        police 50000000 conform-action transmit exceed-action drop
+    class VIDEO
+        police 25000000 conform-action transmit exceed-action set-dscp-transmit af21
+interface GigabitEthernet1
+    service-policy output OUTBOUND-POLICY
+```
+
+* Bc by default is CIR/32
+  * effectively, Bc is 1/32 CIR
+  * Tc will be 1/32s, aka, 32x Tc in 1s
+
+```
+router# show policy-map OUTBOUND-POLICY
+Policy Map OUTBOUND-POLICY
+    Class VOIP-TELEPHONY
+        police cir 50000000 bc 1562500
+            conform-action transmit
+            exceed-action drop
+    Class VIDEO
+        police cir 25000000 bc 781250
+            conform-action transmit
+            exceed-action set-dscp-transmit af21
+```
+
+#### Single-rate three-color marker/policer (srTCM)
+
+* RFC2697
+* two buckets, three traffic states/colors
+  * conform/green
+  * exceed/yellow
+  * voilate/red
+* tokens not used in the first bucket overflows to second bucket
+  * defined by _excess burst (BE)_
+
+![](img/2024-10-29-11-17-33.png)
+> The exceeding and violating traffic rates vary because they rely on random tokens spilling over from the Bc bucket into the Be.
+
+```
+policy-map OUTBOUND-POLICY
+    class VOIP-TELEPHONY
+        police 50000000 conform-action set-dscp-transmit af31 exceed-action
+        set-dscp-transmit af32 violate-action drop
+interface GigabitEthernet1
+    service-policy output OUTBOUND-POLICY
+
+router# show policy-map OUTBOUND-POLICY
+Policy Map OUTBOUND-POLICY
+    Class VOIP-TELEPHONY
+        police cir 50000000 bc 1562500 be 1562500
+            conform-action set-dscp-transmit af31
+            exceed-action set-dscp-transmit af32
+            violate-action drop
+```
+
+#### Two-rate three-color marker/policer (trTCM)
+
+* RFC2698
+* Peak Information Rate (PIR): The maximum rate of traffic allowed
+  * PIR should be equal to or greater than the CIR.
+
+![](img/2024-10-29-11-23-25.png)
+
+* how it works
+
+![](img/2024-10-29-11-24-30.png)
+
+```
+policy-map OUTBOUND-POLICY
+    class VOIP-TELEPHONY
+        police cir 50000000 pir 100000000 conform-action transmit exceed-action set-dscp-transmit af31 violate-action drop
+
+router# show policy-map OUTBOUND-POLICY
+Policy Map OUTBOUND-POLICY
+    Class VOIP-TELEPHONY
+        police cir 50000000 bc 1562500 pir 100000000 be 3125000
+            conform-action transmit
+            exceed-action set-dscp-transmit af31
+            violate-action drop
+```
+
+* by default, _Be_ is 1/32 of _PIR_
+
 ## Congestion Management and Avoidance
+
+### Congestion Management
+
+* queuing and scheduling
+* from router's view, congestion = queue full
+  * transmit ring (Tx-ring/TxQ)
+* causes
+  * input speed > output speed
+  * many-to-one comm.
+* legacy queuing
+  * FIFO
+  * round robin
+  * weighted round robin (WRR)
+    * prioritize multiple queues
+  * custom queue (CQ)
+    * 16 queues, each has its own bw for a particular traffic
+    * unused bw can be used by other queues
+    * but long delays and FIFO problems
+  * priority queue (PQ)
+    * 4 queues (high, medium, normal, low)
+    * may starve low priority queues
+  * weighted fair queue (WFQ)
+    * automatically divide bw by number of flows
+    * flows are priorities by IPP
+* current queuing
+  * Class-based weighted fair queuing (CBWFQ)
+    * up to 256 queues
+    * each serve a traffic class
+      * QoS marking
+      * protocols
+      * ACL
+      * etc.
+    * each queue has
+      * minimal bw guaranteed
+      * queue limit: max # of packets in q
+    * good for non-real-time traffic
+  * Low-latency queuing (LQQ)
+    * CBWFQ + PQ
+    * unused bw from higher pri. q can be used by lower pri. q
+    * PQ is policed to prevent starvation
+
+![](img/2024-10-29-12-23-31.png)
+
+### Congestion Avoidance
+
+* monitoring and proactive actions
+  * actions are taken before queue actually full
+    * predefined threshold
+  * default action: tail drop
+    * drop regardless of traffic class
+    * not suitable for TCP: TCP global synchronization syndrome
+      * multiple TCP sessions share same link
+  * better action: random early drop (RED)
+* Weighted RED 
+  * WRED honors IPP / DSCP
+    * IPP 3 would be dropped more aggressively than IPP 5
+    * DSCP, AFx3 would be dropped more aggressively than AFx2
+  * can also set ECN bits
+
+### CBWFQ config
+
+#### queuing actions
+
+* priority
+  * LLQ priority
+  * it is recommended to configure an explicit policer rate-limit the priority traffic to prevent starvation
+    * policer only works during congestion
+  * `priority [level {1 | 2}] [percent] [<police-rate-in-kbps/percentage>[burst-in-bytes]]`
+    * `percent` enables LLQ strict priority queuing with a conditional policing rate calculated as a percentage of the interface bandwidth, or the shaping rate in a hierarchical policy.
+* bandwidth
+  * min bw guarantee
+  * `bandwidth <bandwidth-kbps> | percent <percentage>`
+    * _percent_ w.r.t. absolute interface bw
+  * `bandwidth remaining percent <percentage> | remaining ratio <ratio>`
+    * _remaining percent_ w.r.t. relative available bw
+* shape
+  * max bw before shaping
+  * `fair-queue`: enable flow-based queuing to manage multiple flows contending for a single queue.
+  * `shape {average | peak} <mean-rate-in-bps> [[<committed-burst-size>] [<excess-burst-size>]]`
+    * `Average` shaping is used to forward packets at the configured mean rate and allows bursting up to the _Bc_ at every _Tc_, and up to _Be_ when extra tokens are available. This is the most-used shaping method.
+    * `Peak` shaping is used to forward packets at the mean rate multiplied by $(1 + Be/Bc)$ at every _Tc_. This method is not commonly used.
+    * It is recommended to use the _Bc_ and _Be_ default values.
+
+#### queue management
+
+* `queue-limit <queue-limit-size> {cos <cos-value> | dscp <dscp-value> | <precedence-value>} percent <percentage-of-packets>`
+  * change default tail drop behavior
+* random-detect [dscp-based|precedence-based|cos-based]
+  * enables WRED
+
+#### example: Queuing Policy with Conditionally Policed Multilevel Priority Queues
+
+```
+! The VOIP and VIDEO classes are conditionally policed.
+! This means that the LLQ queues can use more than their configured
+! policing rate if there is enough bandwidth available to use
+policy-map QUEUING
+    class VOIP
+        priority level 1 percent 30
+    class VIDEO
+        priority level 2 percent 30
+    class CRITICAL
+        bandwidth percent 10
+    class SCAVENGER
+        bandwidth percent 5
+    class TRANSACTIONAL
+        bandwidth percent 15
+    class class-default
+        bandwidth percent 10
+        fair-queue
+        random-detect dscp-based
+        queue-limit 64
+interface GigabitEthernet1
+    service-policy output QUEUING
+```
+
+* under congestion
+  * the VOIP and VIDEO classes would each get a guaranteed minimum bandwidth of 300 Mbps (30% each), or, can only use 300Mbps max
+  * the CRITICAL and class-default classes would each get 100 Mbps (10% each)
+  * the TRANSACTIONAL class would get 150 Mbps (15%)
+  * the SCAVENGER class would get 50 Mbps (5%).
+
+#### example: Queuing Policy with Unconstrained Multilevel Priority Queues
+
+```
+! The VOIP and VIDEO classes do not have a policer (unconstrained).
+! They can take up all of the available bandwidth, leaving
+! no bandwidth remaining for the rest of the classes in the policy
+policy-map QUEUING
+    class VOIP
+        priority level 1
+    class VIDEO
+        priority level 2
+    class CRITICAL
+        bandwidth remaining percent 40
+! Each of the following classes can use up to 20 percent
+! of the remaining bandwidth left by the strict priority queues
+    class SCAVENGER
+        bandwidth remaining percent 20
+    class TRANSACTIONAL
+        bandwidth remaining percent 20
+    class class-default
+        bandwidth remaining percent 20
+        fair-queue
+        random-detect dscp-based
+        queue-limit 64
+interface GigabitEthernet1
+    service-policy output QUEUING
+```
+
+* assume the VOIP and VIDEO classes are using 800 Mbps out of 1 Gbps interface bw.
+  * That would leave 200 Mbps available for the remaining classes. 
+  * The CRITICAL class would get 80 Mbps (40% of 200 Mbps)
+  * the rest of the classes would get 40 Mbps each (20% of 200 Mbps).
+
+#### example: Hierarchical Class-Based Shaping with Nested Queuing Example
+
+```
+! Policy map SHAPING is the parent policy
+policy-map SHAPING
+    class class-default
+        shape average 100000000
+! Policy map QUEUING is the child policy
+        service-policy QUEUING
+! The parent policy SHAPING is the one applied to the interface
+interface GigabitEthernet1
+    service-policy output SHAPING
+```
+
+* The SHAPING parent policy shapes all traffic to 100 Mbps (e.g., to meet ISP's LSA) 
+* In this case, the QUEUING policy uses the mean rate of the traffic shaping policy, which is 100 Mbps

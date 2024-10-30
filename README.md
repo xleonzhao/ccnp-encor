@@ -1,28 +1,25 @@
-- [TOC](#toc)
-  - [Part I - Forwarding](#part-i---forwarding)
-  - [Part II - Layer 2](#part-ii---layer-2)
-  - [Part III - Routing](#part-iii---routing)
-  - [Part IV - Services](#part-iv---services)
-  - [Part V - Overlay](#part-v---overlay)
-  - [Part VI - Wireless](#part-vi---wireless)
-  - [Part VII - Architecture](#part-vii---architecture)
-  - [Part VIII - Security](#part-viii---security)
-  - [Part IX - SDN](#part-ix---sdn)
+- [Part I - Forwarding](#part-i---forwarding)
+- [Part II - Layer 2](#part-ii---layer-2)
+- [Part III - Routing](#part-iii---routing)
+- [Part IV - Services](#part-iv---services)
+- [Part V - Overlay](#part-v---overlay)
+- [Part VI - Wireless](#part-vi---wireless)
+- [Part VII - Architecture](#part-vii---architecture)
+- [Part VIII - Security](#part-viii---security)
+- [Part IX - SDN](#part-ix---sdn)
 
-# TOC
-
-## Part I - Forwarding
+# Part I - Forwarding
 
 * Chapter 1: [Packet Forwarding](./forwarding.md)
 
-## Part II - Layer 2
+# Part II - Layer 2
 
 * Chapter 2: [Spanning Tree Protocol](./02-04-STP.md#ch-2-stp)
 * Chapter 3: [Advanced STP Tuning](./02-04-STP.md#ch-3-advanced-stp-tunning)
 * Chapter 4: [Multiple Spanning Tree Protocol](./02-04-STP.md#ch-4-multiple-spanning-tree-protocol)
 * Chapter 5: [VLAN Trunks and EtherChannel Bundles](./05-vlan-trunk-etherchannel.md)
 
-## Part III - Routing
+# Part III - Routing
 
 * Chapter 6: [IP Routing Essentials](./06-routing-basics.md)
 * Chapter 7: [EIGRP](./07-EIGRP.md)
@@ -33,16 +30,16 @@
 * Chapter 12: [Advanced BGP]((./11-12-BGP.md))
 * Chapter 13: [Multicast](./13-multicast.md)
 
-## Part IV - Services
+# Part IV - Services
 
-* Chapter 14: Quality of Service (QoS)
+* Chapter 14: [Quality of Service (QoS)](./14-QoS.md)
 * Chapter 15: IP Services
 
-## Part V - Overlay
+# Part V - Overlay
 
 * Chapter 16: Overlay Tunnels
 
-## Part VI - Wireless
+# Part VI - Wireless
 
 * Chapter 17: Wireless Signals and Modulation
 * Chapter 18: Wireless Infrastructure
@@ -50,18 +47,18 @@
 * Chapter 20: Authenticating Wireless Clients
 * Chapter 21: Troubleshooting Wireless Connectivity
 
-## Part VII - Architecture
+# Part VII - Architecture
 
 * Chapter 22: Enterprise Network Architecture
 * Chapter 23: Fabric Technologies
 * Chapter 24: Network Assurance
 
-## Part VIII - Security
+# Part VIII - Security
 
 * Chapter 25: Secure Network Access Control
 * Chapter 26: Network Device Access Control and Infrastructure Security
 
-## Part IX - SDN
+# Part IX - SDN
 
 * Chapter 27: Virtualization
 * Chapter 28: Foundational Network Programmability Concepts
