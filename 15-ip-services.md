@@ -5,13 +5,23 @@
   - [Three PTP modes](#three-ptp-modes)
   - [PTP Config](#ptp-config)
 - [First-Hop Redundancy Protocol (FHRP)](#first-hop-redundancy-protocol-fhrp)
-  - [Object tracking](#object-tracking)
+  - [Object Tracking](#object-tracking)
   - [Hot Standby Router Protocol (HSRP)](#hot-standby-router-protocol-hsrp)
     - [HSRP config](#hsrp-config)
   - [Virtual Router Redundancy Protocol (VRRP)](#virtual-router-redundancy-protocol-vrrp)
     - [VRRPv2 config](#vrrpv2-config)
     - [VRRPv3 config](#vrrpv3-config)
+  - [Gateway Load Balancing Protocol (GLBP)](#gateway-load-balancing-protocol-glbp)
+    - [GLBP config](#glbp-config)
+    - [Load balancing](#load-balancing)
 - [Network Address Translation (NAT)](#network-address-translation-nat)
+  - [RFC1918](#rfc1918)
+  - [Basics](#basics)
+  - [Static NAT](#static-nat)
+    - [Inside Static NAT](#inside-static-nat)
+    - [Outside Static NAT](#outside-static-nat)
+  - [Pooled NAT](#pooled-nat)
+  - [PAT](#pat)
 
 # Time Synchronization (NTP)
 
@@ -89,7 +99,7 @@ system poll interval is 64, last update was 1 sec ago.
   * Virtual Router Redundancy Protocol (VRRP)
   * Gateway Load Balancing Protocol (GLBP)
 
-## Object tracking
+## Object Tracking
 
 * track the changes of routes or link state
 * works with FHRP
@@ -275,4 +285,223 @@ Vlan22 - Group 22 - Address-Family IPv4
     FLAGS: 1/1
 ```
 
+## Gateway Load Balancing Protocol (GLBP)
+
+* cisco proprietary
+* active/standby gateway
+* each member of the GLBP group takes care of forwarding the traffic to the appropriate gateway
+* based on who and what to reply of ARP
+  * ARP reply is unicast
+* two roles
+  * Active virtual gateway (AVG)
+    * elect one AVG router to respond ARP requests
+      * (VIP, virtual Mac of AVF)
+  * Active virtual forwarder (AVF)
+    * AVF routes traffic received from assigned hosts
+* one GLBP group support 4x AVF and 1x AVG
+* in case of AVG failure, standby AVG takes care of the business
+* in case of AVF failure, another AVF takes over
+  * AVG will not use failed AVF to respond ARP ?
+
+### GLBP config
+
+```
+SW2(config)# interface vlan 30
+SW2(config-if)# ip address 172.16.30.2 255.255.255.0
+SW2(config-if)# glbp 30 ip 172.16.30.1
+05:41:15.802: %GLBP-6-STATECHANGE: Vlan30 Grp 30 state Speak -> Active
+05:41:25.938: %GLBP-6-FWDSTATECHANGE: Vlan30 Grp 30 Fwd 1 state Listen -> Active
+SW2(config-if)# glbp 30 preempt
+
+SW3(config)# interface vlan 30
+SW3(config-if)# ip address 172.16.30.3 255.255.255.0
+SW3(config-if)# glbp 30 ip 172.16.30.1
+05:41:32.239: %GLBP-6-FWDSTATECHANGE: Vlan30 Grp 30 Fwd 2 state Listen -> Active
+SW3(config-if)# glbp 30 preempt
+
+SW2# show glbp
+Vlan30 - Group 30
+    State is Active
+        1 state change, last state change 00:01:26
+    Virtual IP address is 172.16.30.1
+    Hello time 3 sec, hold time 10 sec
+    Next hello sent in 1.664 secs
+    Redirect time 600 sec, forwarder time-out 14400 sec
+    Preemption enabled, min delay 0 sec
+    Active is local
+    Standby is 172.16.30.3, priority 100 (expires in 7.648 sec)
+    Priority 100 (default)
+    Weighting 100 (default 100), thresholds: lower 1, upper 100
+    Load balancing: round-robin
+    Group members:
+        70b3.17a7.7b65 (172.16.30.3)
+        70b3.17e3.cb65 (172.16.30.2) local
+    There are 2 forwarders (1 active)
+    Forwarder 1
+        State is Active
+            1 state change, last state change 00:01:16
+        MAC address is 0007.b400.1e01 (default)
+        Owner ID is 70b3.17e3.cb65
+        Redirection enabled
+        Preemption enabled, min delay 30 sec
+        Active is local, weighting 100
+    Forwarder 2
+        State is Listen
+        MAC address is 0007.b400.1e02 (learnt)
+        Owner ID is 70b3.17a7.7b65
+        Redirection enabled, 597.664 sec remaining (maximum 600 sec)
+        Time to live: 14397.664 sec (maximum 14400 sec)
+        Preemption enabled, min delay 30 sec
+        Active is 172.16.30.3 (primary), weighting 100 (expires in 8.160 sec)
+```
+
+![](img/2024-10-31-15-54-49.png)
+
+* The first entry contains a hyphen (-) for the Fwd state, which means that it is the entry for the AVG
+
+### Load balancing
+
+* Round robin: 
+  * Uses each virtual forwarder MAC address to sequentially reply for the virtual IP address.
+* Weighted: 
+  * Defines weights to each device in the GLBP group to define the ratio of load balancing between the devices. 
+  * This allows for a larger weight to be assigned to bigger routers that can handle more traffic.
+* Host dependent: 
+  * Uses the host MAC address to decide to which virtual forwarder MAC to redirect the packet. 
+  * This method ensures that the host uses the same virtual MAC address as long as the number of virtual forwarders does not change within the group.
+
+`glbp <instance-id> load-balancing {host-dependent | round-robin | weighted}`
+
 # Network Address Translation (NAT)
+
+## RFC1918
+
+* 10.0.0.0/8 accommodates 16,777,216 hosts.
+* 172.16.0.0/12 accommodates 1,048,576 hosts.
+* 192.168.0.0/16 accommodates 65,536 hosts.
+
+## Basics
+
+* terms
+  * Inside local
+    * private IP address
+  * Inside global
+    * public IP address
+  * Outside local
+    * The IP address of an outside host as it appears to the inside network. 
+    * The IP address does not have to be reachable by the outside but is considered private and must be reachable by the inside network.
+  * Outside global
+    * The public IP address assigned to a host on the outside network. 
+    * This IP address must be reachable by the outside network.
+* 3 types
+  * Static NAT
+    * Provides a static one-to-one mapping of a local IP address to a global IP address.
+  * Pooled NAT
+    * Provides a dynamic one-to-one mapping of a local IP address to a global IP address. 
+    * The global IP address is temporarily assigned to a local IP address. 
+      * After a certain amount of idle NAT time, the global IP address is returned to the pool.
+  * Port Address Translation (PAT)
+    * Provides a dynamic many-to-one mapping of many local IP addresses to one global IP address.
+    * (local private IP, port X) <-> (port Y)
+      * port Y is unique which enables the NAT device to track the global IP address to local IP addresses (and local port) based on the unique port mapping.
+  
+## Static NAT
+
+* only source IP got altered
+![](img/2024-10-31-16-30-46.png)
+
+### Inside Static NAT
+
+* inside local -> inside global
+
+```
+R5(config)# interface GigabitEthernet0/0
+R5(config-if)# ip nat outside
+R5(config-if)# interface GigabitEthernet0/1
+R5(config-if)# ip nat inside
+R5(config-if)# exit
+R5(config)# ip nat inside source static 10.78.9.7 10.45.1.7
+```
+
+![](img/2024-10-31-16-27-57.png)
+
+### Outside Static NAT
+
+* outside global -> outside local
+
+```
+R5(config)# interface GigabitEthernet0/0
+R5(config-if)# ip nat outside
+R5(config-if)# interface GigabitEthernet0/1
+R5(config-if)# ip nat inside
+R5(config-if)# exit
+R5(config)# ip nat outside source static 10.123.4.2 10.123.4.222
+```
+
+![](img/2024-10-31-16-33-55.png)
+
+> Outside static NAT configuration is not very common and is typically used to overcome the problems caused by duplicate IP/network addresses in a network.
+
+## Pooled NAT
+
+```
+R5(config)# ip access-list standard ACL-NAT-CAPABLE
+R5(config-std-nacl)# permit 10.78.9.0 0.0.0.255
+R5(config-std-nacl)# exit
+R5(config)# interface GigabitEthernet0/0
+R5(config-if)# ip nat outside
+R5(config-if)# interface GigabitEthernet0/1
+R5(config-if)# ip nat inside
+R5(config-if)# exit
+!
+! Define the global pool of IP addresses
+! `ip nat pool <nat-pool-name> <starting-ip> <ending-ip> prefix-length <prefix-length>`
+!
+R5(config)# ip nat pool R5-OUTSIDE-POOL 10.45.1.10 10.45.1.11 prefix-length 24
+!
+! Configure the inside pooled NAT
+! `ip nat inside source list <acl> pool <nat-pool-name>`
+!
+R5(config)# ip nat inside source list ACL-NAT-CAPABLE pool R5-OUTSIDE-POOL
+```
+
+![](img/2024-10-31-16-39-49.png)
+
+* Based on the mapping before the flow, the additional flows from R8 (10.78.9.8) should be mapped to the global IP address 10.45.1.11.
+* if pool is smaller than inside local addresses, NAT may fail
+  * it's a one-to-one mapping after all
+* if R9 want to be NAT'd, it will fail, because pool only has two inside global IP addresses
+
+```
+R5#
+02:22:58.685: NAT: failed to allocate address for 10.78.9.9, list/map ACL-NAT-CAPABLE
+02:22:58.685: mapping pointer available mapping:0
+02:22:58.685: NAT*: Can't create new inside entry - forced_punt_flags: 0
+02:22:58.685: NAT: failed to allocate address for 10.78.9.9, list/map ACL-NAT-CAPABLE
+02:22:58.685: mapping pointer available mapping:0
+02:22:58.685: NAT: translation failed (A), dropping packet s=10.78.9.9 d=10.123.4.1
+```
+
+* translation expiration time
+  * default: 24 hours
+  * `ip nat translation timeout <seconds>`
+* clear translations
+  * `clear ip nat translation {<ip-address> | *}`
+
+## PAT
+
+* aka, NAT overload
+
+```
+R5(config)# ip access-list standard ACL-NAT-CAPABLE
+R5(config-std-nacl)# permit 10.78.9.0 0.0.0.255
+R5(config-std-nacl)# exit
+R5(config)# interface GigabitEthernet0/0
+R5(config-if)# ip nat outside
+R5(config-if)# interface GigabitEthernet0/1
+R5(config-if)# ip nat inside
+R5(config)# ip nat inside source list ACL-NAT-CAPABLE interface GigabitEthernet0/0
+overload
+```
+
+![](img/2024-10-31-16-47-08.png)

@@ -33,7 +33,7 @@
 # Part IV - Services
 
 * Chapter 14: [Quality of Service (QoS)](./14-QoS.md)
-* Chapter 15: IP Services
+* Chapter 15: [IP Services](./15-ip-services.md)
 
 # Part V - Overlay
 
