@@ -38,6 +38,7 @@
 - [Virtual Extensible Local Area Network (VXLAN):](#virtual-extensible-local-area-network-vxlan)
   - [VTEPs (virtual tunnel endpoints)](#vteps-virtual-tunnel-endpoints)
   - [Protocols](#protocols)
+    - [VXLAN + EVPN](#vxlan--evpn)
   - [Cisco Software-Defined Access (SD-Access)](#cisco-software-defined-access-sd-access)
 
 # Basics
@@ -657,6 +658,18 @@ host2.
   * VXLAN with LISP control plane
 
 > MP-BGP EVPN and Multicast are the most popular control planes used for data center and private cloud environments. For campus environments, VXLAN with a LISP control plane is the preferred choice.
+
+### VXLAN + EVPN
+
+* VXLAN: data plane
+* EVPN: control plane
+  * MAC "learning", aka, arp resolve IP->MAC
+    * endpoint MAC addresses, endpoint IP addresses, and subnet reachability information
+  * VTEP peer discovery / authentication
+> there must be a control plane where the location of a device or application (dst MAC, dst IP) can be looked up and the result used to encapsulate the packet
+> also need distribute MAC/IP **host** reachability information across the network
+
+* [book](./VXLAN_EVPN.pdf)
 
 ## Cisco Software-Defined Access (SD-Access)
 
