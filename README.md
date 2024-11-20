@@ -41,7 +41,7 @@
 
 # Part VI - Wireless
 
-* Chapter 17: Wireless Signals and Modulation
+* Chapter 17: [Wireless Signals and Modulation](./17-wireless.md)
 * Chapter 18: Wireless Infrastructure
 * Chapter 19: Understanding Wireless Roaming and Location Services
 * Chapter 20: Authenticating Wireless Clients
@@ -49,7 +49,7 @@
 
 # Part VII - Architecture
 
-* Chapter 22: Enterprise Network Architecture
+* Chapter 22: [Enterprise Network Architecture](./22-enterprise-arch.md)
 * Chapter 23: Fabric Technologies
 * Chapter 24: Network Assurance
 
@@ -60,9 +60,9 @@
 
 # Part IX - SDN
 
-* Chapter 27: Virtualization
-* Chapter 28: Foundational Network Programmability Concepts
-* Chapter 29: Introduction to Automation Tools
+* Chapter 27: [Virtualization](./27-SDN.md)
+* Chapter 28: [Foundational Network Programmability Concepts](./28-29-automation.md)
+* Chapter 29: [Introduction to Automation Tools](./28-29-automation.md)
 
 ---
 

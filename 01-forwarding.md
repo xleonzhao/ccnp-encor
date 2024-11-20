@@ -82,12 +82,17 @@ SW1(config-if)# switchport access vlan 99
 
 * Catalyst access switches place switch ports as Layer 2 access ports for VLAN 1 by default.
 
+---
+
+* `swtichport host` is a shortcut to put port in access and enable portfast
+
 ### Trunk Ports
 
 * Trunk ports can **carry** multiple VLANs.
 * Trunk ports are typically used when multiple VLANs need connectivity between a switch and another switch, router, or firewall and use only one port. 
 * Upon receipt of the packet on the remote trunk link, the headers are examined,  traffic is associated to the proper VLAN, then the 802.1Q headers are removed, traffic is forwarded to the next port, based on the MAC address for that VLAN.
 * *LZ: trunk ports see untagged coming in, let untagged coming out?*
+  * no, trunk ports just carry VLAN IDs in ethernet frame
 
 ```
 SW1(config)# interface gi1/0/2

@@ -1,15 +1,4 @@
-# setup
-
-* run [PNetLab](https://pnetlab.com/pages/download) as virtual machine
-* login to vm and install [ishare2](https://github.com/ishare2-org/ishare2-cli)
-
-## convert .ova to .qcow2
-
-* unrar .ova with `tar xvf`
-* there will be a .vmdk file, convert it to .qcow2
-* `qemu-img convert -f vmdk -O qcow2 image-disk1.vmdk image.qcow2`
-
-# vlan
+# Lab: vlan
 
 * https://user.pnetlab.com/store/labs/detail?id=16405723981793
 
