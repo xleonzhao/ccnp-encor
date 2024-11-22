@@ -64,9 +64,8 @@ $(1500 bytes × 8) / 1 Gbps = 12,000 / 1,000,000,000 = 0.12us$
 * Differentiated Services (DiffServ)
   * network identifies classes that require special QoS treatment
 
-* network identifies classes that require special QoS treatment
-
 ## Integrated Services (IntServ)
+
 * use RSVP
   * call admission control (CAC) to guarantee reserved bw
   * if reserved not used, it's wasted

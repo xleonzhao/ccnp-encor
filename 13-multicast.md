@@ -109,7 +109,7 @@
 
 * like ICMP, it's over IP
 * protocol: 2
-* router alert bit: set
+* router alert option: set
 * TTL: 1
 
 ![](img/2024-10-23-14-41-37.png)
@@ -310,7 +310,7 @@
 
 * shared Tree Join / receiver arrives RP
   * LHR PIM join (*,G) to RP
-* source registration / source arrives RP + source/receiver meet
+* source registration / source arrives RP -> source/receiver meet
   * FHR PIM register to RP via RIM register tunnel
   * RP PIM Join (S,G) to FHR
   * multicast data arrives RP natively

@@ -532,8 +532,8 @@ outbound esp sas:
 
 * DNS-like
   * resolve an EID into an RLOC
-* LISP router -> LISP mapping system: Where is EID 10.1.2.2?
-* LISP mapping system -> LISP router: RLOC is 100.64.2.2
+  * LISP router -> LISP mapping system: Where is EID 10.1.2.2?
+  * LISP mapping system -> LISP router: RLOC is 100.64.2.2
 
 ### LISP data plane protocol
 
@@ -631,7 +631,7 @@ host2.
 
 ![](img/2024-11-07-16-10-00.png)
 
-* VNI (VXLAN network identifier): 24b
+* VNI/VNID (VXLAN network identifier): 24b
   * ~16M vxlan segments / overlay networks
 
 ## VTEPs (virtual tunnel endpoints)

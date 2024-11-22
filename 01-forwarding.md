@@ -113,7 +113,8 @@ switchport trunk allowed vlan 1,10,20,99
 ### Native VLAN
 
 * Any traffic that is transmitted or received on a trunk port without the 802.1Q VLAN tag is associated to the native VLAN. 
-* Any traffic associated to the native VLAN will flow across the trunk port untagged. The default native VLAN is VLAN 1.
+* Any traffic associated to the native VLAN will flow across the trunk port untagged. 
+* The default native VLAN is VLAN 1.
   * the default can be changed by `switchport trunk native vlan vlan-id`
   * The native VLAN should match on both ports for traffic to be transmitted for that VLAN across the trunk link.
   * All switch control plane traffic is advertised using VLAN 1.
@@ -123,7 +124,6 @@ switchport trunk allowed vlan 1,10,20,99
 ## Troubleshooting
 
 ### check mac table
-
 
 ```
 SW1# show mac address-table dynamic
