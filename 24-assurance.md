@@ -23,6 +23,13 @@
   - [Remote SPAN (RSPAN)](#remote-span-rspan)
   - [Encapsulated Remote (ERSPAN)](#encapsulated-remote-erspan)
 - [IP SLA](#ip-sla)
+  - [config ping probe](#config-ping-probe)
+  - [config http probe](#config-http-probe)
+  - [collect results](#collect-results)
+- [Cisco DNA Center Assurance](#cisco-dna-center-assurance)
+  - [user searchable](#user-searchable)
+  - [Path Trace](#path-trace)
+  - [guided remediation](#guided-remediation)
 
 # Basics
 
@@ -419,3 +426,82 @@ SW4# show monitor session erspan-source session
 ```
 
 # IP SLA
+
+* end-to-end from customers' point of view
+* probes
+  * Delay (both round-trip and one-way)
+  * Jitter (directional)
+  * Packet loss (directional)
+  * Packet sequencing (packet ordering)
+  * Path (per hop)
+  * Connectivity (directional)
+  * Server or website download time
+  * Voice quality scores
+
+## config ping probe
+
+```
+R1(config)# ip sla 1
+R1(config-ip-sla)# icmp-echo 192.168.14.100 source-interface Loopback0
+! run ping every 300 seconds
+R1(config-ip-sla-echo)# frequency 300
+R1(config)# ip sla schedule 1 life forever start-time now
+R1(config)# do show ip sla configuration 1
+```
+
+## config http probe
+
+```
+R1(config)# ip sla 2
+R1(config-ip-sla)# http get http://192.168.14.100
+R1(config-ip-sla-http)# frequency 90
+R1(config)# ip sla schedule 2 start-time now life forever
+R1(config)# show ip sla configuration 2
+```
+
+## collect results 
+
+* using the CISCO-RTTMON-MIB
+* traps can be sent to an NMS via syslog
+
+# Cisco DNA Center Assurance
+
+* customer concerns
+  * security
+  * QoE
+  * simplify mgmt/ops
+* DNA capabilities
+  * Cisco SD-Access fabric configuration
+  * Software image management (SWIM)
+  * Simplified provisioning for devices
+  * Wireless network management
+  * Simplified security policies
+  * Configuration templates
+  * Third-party integration
+  * Network assurance
+  * Plug and Play
+* Network Time Travel
+  * using streaming telemetry
+  * past, now, future (prediction)
+
+> Assurance takes 30+ years of Cisco Technical Assistance Center (TAC) experience and puts it into a tool that uses machine learning to diagnose issues within a network. 
+> In addition to finding and diagnosing the issues, Assurance gives guided remediation steps to fix the issue.
+
+* open APIs and SDKs available for Cisco DNA Center
+  * integrated with many others like ISE, Service Now, infoblox, etc.
+
+## user searchable
+
+![](img/2024-11-24-10-32-03.png)
+![](img/2024-11-24-10-32-44.png)
+
+## Path Trace
+
+* if there are ACL in between, it will show up as well
+
+![](img/2024-11-24-10-36-44.png)
+
+## guided remediation
+
+![](img/2024-11-24-10-38-45.png)
+
