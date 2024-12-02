@@ -1,3 +1,27 @@
+- [OSI model](#osi-model)
+- [layer 2 forwarding](#layer-2-forwarding)
+  - [MAC Table](#mac-table)
+    - [manually change the mac-table](#manually-change-the-mac-table)
+    - [Timer ?](#timer-)
+  - [VLAN](#vlan)
+    - [Access Ports](#access-ports)
+    - [Trunk Ports](#trunk-ports)
+    - [Native VLAN](#native-vlan)
+  - [Troubleshooting](#troubleshooting)
+    - [check mac table](#check-mac-table)
+    - [check interface/port status](#check-interfaceport-status)
+  - [Lab](#lab)
+- [Layer-3 forwarding](#layer-3-forwarding)
+- [Forwarding Architecture](#forwarding-architecture)
+  - [Process switching](#process-switching)
+    - [Data structures](#data-structures)
+  - [CEF](#cef)
+    - [TCAM](#tcam)
+    - [Distributed Forwarding](#distributed-forwarding)
+    - [Software CEF](#software-cef)
+    - [Hardware CEF](#hardware-cef)
+    - [SDM templates](#sdm-templates)
+
 # OSI model
 
 | Layer   | Name         | Description                                       |

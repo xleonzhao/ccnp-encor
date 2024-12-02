@@ -51,7 +51,7 @@
 
 * Chapter 22: [Enterprise Network Architecture](./22-enterprise-arch.md)
 * Chapter 23: [Fabric Technologies](./23-SD-Access-WAN.md)
-* Chapter 24: Network Assurance
+* Chapter 24: [Network Assurance](./24-assurance.md)
 
 # Part VIII - Security
 
