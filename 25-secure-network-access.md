@@ -14,7 +14,26 @@
     - [Cisco Secure Network Analytics (Stealthwatch Enterprise)](#cisco-secure-network-analytics-stealthwatch-enterprise)
     - [Cisco Secure Cloud Analytics (Stealthwatch Cloud)](#cisco-secure-cloud-analytics-stealthwatch-cloud)
     - [Cisco Identity Services Engine (ISE)](#cisco-identity-services-engine-ise)
+      - [Cisco Platform Exchange Grid (pxGrid)](#cisco-platform-exchange-grid-pxgrid)
   - [Network Access Control (NAC)](#network-access-control-nac)
+    - [802.1x](#8021x)
+      - [EAP methods](#eap-methods)
+      - [EAP chaining](#eap-chaining)
+    - [MAC Authentication Bypass (MAB)](#mac-authentication-bypass-mab)
+    - [Web Authentication (WebAuth)](#web-authentication-webauth)
+      - [Local Web Authentication (LWA)](#local-web-authentication-lwa)
+      - [Central Web Authentication with Cisco ISE (CWA)](#central-web-authentication-with-cisco-ise-cwa)
+      - [Enhanced Flexible Authentication (FlexAuth)](#enhanced-flexible-authentication-flexauth)
+    - [Cisco Identity-Based Networking Services (IBNS) 2.0](#cisco-identity-based-networking-services-ibns-20)
+    - [Cisco TrustSec](#cisco-trustsec)
+      - [SGT naming](#sgt-naming)
+      - [Ingress Classification](#ingress-classification)
+      - [Propagation](#propagation)
+      - [Egress Enforcement](#egress-enforcement)
+    - [MACsec](#macsec)
+      - [Frame header](#frame-header)
+      - [Downlink MACsec](#downlink-macsec)
+      - [Uplink MACsec](#uplink-macsec)
 
 # Secure Network Access Control
 
@@ -353,43 +372,310 @@
     * user uses username and password
       * but password was hashed, plaintext never transferred
     * primarily relying on symmetric encryption
-* Cisco Platform Exchange Grid (pxGrid)
-  * shares contextual information using a single API between different Cisco platforms as well as partners
-  * pxGrid is an IETF framework
-    * pxGrid Server: central pxGrid controller
-    * pxGrid nodes: all Cisco and third-party security platforms
-    * pxGrid 1.0: Released with ISE 1.3 and based on Extensible Messaging and Presence Protocol (XMPP)
-      * kinda obselete
-    * pxGrid 2.0: Uses WebSocket and the REST API over Simple Text Oriented Message Protocol (STOMP) 1.2
-        ```
-        Session={ip=[192.168.1.2]
-        Audit Session Id=0A000001000000120001C0AC
-        UserName=dewey.hyde@corelab.com
-        ADUserDNSDomain=corelab.com
-        ADUserNetBIOSName=corelab,
-        ADUserResolvedIdentities=dewey.hyde@corelab.com
-        ADUserResolvedDNs=CN=Dewey Hyde
-        CN=Users
-        DC=corelab
-        DC=com
-        MacAddresses=[00:0C:C1:31:54:69]
-        State=STARTED
-        ANCstatus=ANC_Quarantine
-        SecurityGroup=Quarantined_Systems
-        EndpointProfile=VMWare-Device
-        NAS IP=192.168.1.1
-        NAS Port=GigabitEthernet0/0/1
-        RADIUSAVPairs=[ Acct-Session-Id=0000002F]
-        Posture Status=null
-        Posture Timestamp=
-        LastUpdateTime=Sat Aug 21 11:49:50 CST 2019
-        Session attributeName=Authorization_Profiles
-        Session attributeValue=Quarantined_Systems
-        Providers=[None]
-        EndpointCheckResult=none
-        IdentitySourceFirstPort=0
-        IdentitySourcePortStart=0
-        ```
+
+#### Cisco Platform Exchange Grid (pxGrid)
+
+* shares contextual information using a single API between different Cisco platforms as well as partners
+* pxGrid is an IETF framework
+  * pxGrid Server: central pxGrid controller
+  * pxGrid nodes: all Cisco and third-party security platforms
+  * pxGrid 1.0: Released with ISE 1.3 and based on Extensible Messaging and Presence Protocol (XMPP)
+    * kinda obselete
+  * pxGrid 2.0: Uses WebSocket and the REST API over Simple Text Oriented Message Protocol (STOMP) 1.2
+      ```
+      Session={ip=[192.168.1.2]
+      Audit Session Id=0A000001000000120001C0AC
+      UserName=dewey.hyde@corelab.com
+      ADUserDNSDomain=corelab.com
+      ADUserNetBIOSName=corelab,
+      ADUserResolvedIdentities=dewey.hyde@corelab.com
+      ADUserResolvedDNs=CN=Dewey Hyde
+      CN=Users
+      DC=corelab
+      DC=com
+      MacAddresses=[00:0C:C1:31:54:69]
+      State=STARTED
+      ANCstatus=ANC_Quarantine
+      SecurityGroup=Quarantined_Systems
+      EndpointProfile=VMWare-Device
+      NAS IP=192.168.1.1
+      NAS Port=GigabitEthernet0/0/1
+      RADIUSAVPairs=[ Acct-Session-Id=0000002F]
+      Posture Status=null
+      Posture Timestamp=
+      LastUpdateTime=Sat Aug 21 11:49:50 CST 2019
+      Session attributeName=Authorization_Profiles
+      Session attributeValue=Quarantined_Systems
+      Providers=[None]
+      EndpointCheckResult=none
+      IdentitySourceFirstPort=0
+      IdentitySourcePortStart=0
+      ```
 
 ## Network Access Control (NAC)
 
+### 802.1x
+
+* port-based NAC (PNAC)
+* components
+  * Extensible Authentication Protocol (EAP)
+    * RFC 4187
+    * message format / protocol for encapsulated transport for authentication parameters
+  * EAP method / EAP type
+    * authentication methods
+  * EAP over LAN
+    * layer 2 encapsulation protocol defined by 802.1x
+    * for transport EAP messages
+  * RADIUS
+    * AAA used by EAP
+* roles
+  * supplicant
+    * client
+  * authenticator
+    * liaison between client and server
+      * takes the EAPoL encapsulated frame from the supplicant
+      * encapsulates it within the RADIUS packet
+      * sent to the authentication server
+      * opens up the port if the authentication server directs it to
+    * switch / WLC
+  * authentication server
+    * RADIUS server
+  
+![](img/2024-12-02-14-55-00.png)
+
+* process
+
+![](img/2024-12-02-14-57-41.png)
+
+#### EAP methods
+
+* EAP challenge-based authentication method
+  * Extensible Authentication Protocol-Message Digest 5 (EAP-MD5)
+    * hide the credentials in a hash
+    * one-way authentication
+* EAP TLS authentication method
+  * Extensible Authentication Protocol-Transport Layer Security (EAP-TLS)
+    * use PKI
+    * mutual authentication
+    * need install certs on supplicant
+* EAP tunneled TLS authentication methods
+  * Protected Extensible Authentication Protocol (PEAP)
+    * only server need install certs
+    * use inner auth. method to authenticate client
+  * Extensible Authentication Protocol Flexible Authentication via Secure Tunneling (EAP-FAST)
+    * like PEAP
+    * by cisco
+    * re-authenticate faster by using protected access credentials (PACs)
+      * PAC is similar to a secure cookie
+    * support EAP chaining
+  * Extensible Authentication Protocol Tunneled Transport Layer Security (EAP-TTLS)
+    * like PEAP
+    * not widely used
+    * support additional inner methods
+      * legacy Password Authentication Protocol (PAP)
+      * Challenge Handshake Authentication Protocol (CHAP)
+      * Microsoft Challenge Handshake Authentication Protocol (MS-CHAP)
+* EAP inner authentication methods
+  * EAP Microsoft Challenge Handshake Authentication Protocol Version 2 (EAP-MSCHAPv2)
+    * PEAPv0
+    * username/password
+    * auth. against MS Active Directory
+  * EAP Generic Token Card (EAP-GTC)
+    * PEAPv1
+    * cisco thing
+    * alternative to MSCHAPv2
+    * against any identity store
+      * OTP token server
+      * LDAP
+      * NetIQ eDirectory
+  * EAP TLS
+    * TLS in TLS
+    * rarely used
+
+> EAP inner authentication methods are tunneled within PEAP, EAP-FAST, and EAP-TTLS, which are also known as _outer_ or _tunneled TLS authentication methods_.
+> Similar to the way an HTTPS/TLS session is established before user type in username/password
+
+#### EAP chaining
+
+* combine machine and user authentication in one outer TLS tunnel
+* allows the assignment of greater privileges or posture assessments to users who connect to the network using corporate-managed devices
+
+### MAC Authentication Bypass (MAB)
+
+* port-based NAC
+* use MAC address
+  * switch learn it via first packet
+
+![](img/2024-12-02-15-23-34.png)
+
+* as a fallback to 802.1x
+  * if 802.1x is enabled
+  * after 3x timeout (90s), switch from 802.1x to MAB
+* MAC addr can be spoofed
+  * limit the access
+* authorization options
+  * Downloadable ACLs (dACLs)
+  * Dynamic VLAN assignment (dVLAN)
+  * Security Group Tags (SGT) tags
+
+### Web Authentication (WebAuth)
+
+* fallback for MAB if both enabled
+* used in hotels etc
+* still need RADIUS
+* two types of WebAuth:
+  * Local Web Authentication
+  * Centralized Web Authentication with Cisco ISE
+
+#### Local Web Authentication (LWA)
+
+* a locally hosted web portal running in the switch where username/password were entered
+  * not customizable/brandable
+* switch send to RADIUS server on behalf of user
+
+> Cisco switches and a variety of third-party 802.1x-compliant switches have the option to assign a guest VLAN to endpoints that don’t have an 802.1x supplicant. 
+> Many production deployments of 802.1x still use this legacy option to provide wired guests access to the Internet; 
+> however, it is important to note that guest VLAN and LWA are mutually exclusive.
+
+#### Central Web Authentication with Cisco ISE (CWA)
+
+* support posture profiling, dACL, VLAN authorization
+* also client provisioning, posture assessments, acceptable use policies, password changing, self-registration, and device registration
+* process:
+  1. The endpoint entering the network does not have a configured supplicant or the supplicant is misconfigured.
+  2. The switch performs MAB, sending the RADIUS access-request to Cisco ISE (the authentication server).
+  3. The authentication server (ISE) sends the RADIUS result, including a URL redirection, to the centralized portal on the ISE server itself.
+  4. The endpoint is assigned an IP address, DNS server, and default gateway using DHCP.
+  5. The end user opens a browser and enters credentials into the centralized web portal. Unlike with LWA, the credentials are stored in ISE and are tied together with the MAB coming from the switch.
+  6. ISE sends a re-authentication change of authorization (CoA-reauth) to the switch.
+  7. The switch sends a new MAB request with the same session ID to ISE. ISE sends the final authorization result to the switch for the end user, including an authorization option such as a downloadable ACL (dACL).
+
+#### Enhanced Flexible Authentication (FlexAuth)
+
+* allowing multiple authentication methods concurrently
+  * no need to wait timeout for proceeded methods
+
+### Cisco Identity-Based Networking Services (IBNS) 2.0
+
+* offers authentication, access control, and user policy enforcement
+* end-to-end access policy
+* apply to wired / wireless
+* combining
+  * Enhanced FlexAuth (Access Session Manager)
+  * Cisco Common Classification Policy Language (C3PL)
+  * Cisco ISE
+
+### Cisco TrustSec
+
+* next-gen access control
+  * VLANs
+  * firewall/ACL rules
+* use Security Group Tags (SGT) for 
+  * ingress tagging
+    * SGT delivered to the authenticator as an authorization option
+  * egress filtering
+    * allow or drop
+    * at any egress point of the TrustSec network
+
+#### SGT naming
+
+* SGT tags represent the context of the user, device, use case, or function. 
+* This means SGT tags are often named after particular roles or business use cases. 
+  * For example, a corporate user with a Mac that successfully authenticates via 802.1x using EAP chaining could be assigned an SGT by ISE named `Mac_Corporate`. 
+  * If the Mac is not compliant with posture requirements because it is not owned by the corporation, then it can be assigned an SGT named `Mac_Guest`.
+* SGT has a corresponding SG ID, which will be in L2 header
+
+![](img/2024-12-03-10-39-29.png)
+
+#### Ingress Classification
+
+* Dynamic assignment
+  * conventional networks
+* Static assignment
+  * data centers
+    * no 802.1x needed
+  * IP to SGT
+  * subnet to SGT
+  * VLAN to SGT tag
+  * Layer 2 interface to SGT tag
+  * Layer 3 logical interface to SGT tag
+  * Port to SGT tag
+  * Port profile to SGT tag
+
+#### Propagation
+
+* Inline tagging
+  * only by Cisco network devices with ASIC support for TrustSec
+
+![](img/2024-12-03-10-44-24.png)
+
+* SGT Exchange Protocol (SXP) propagation
+  * TCP-based
+  * peer-to-peer
+  * for devices not supporting inline tagging
+  * speaker
+  * listener
+* propagating IP-to-SGT mapping
+
+![](img/2024-12-03-10-48-03.png)
+
+* SGT-capable HW will always tagging
+* a database will be maintained at each SXP device
+
+#### Egress Enforcement
+
+* Security Group Firewall (SGFW)
+  * tag-based rules defined locally on the firewall
+* Security Group ACL (SGACL)
+  * filtering based on source and destination SGT tags
+    * src/dst acl matrix
+    * can be more granular
+      * e.g., only allow SSH
+
+![](img/2024-12-03-10-59-43.png)
+
+> Notice that traffic is blocked on egress and not on ingress.
+
+* SGT based network segmentation
+  * more granular than VLAN-based
+
+![](img/2024-12-03-11-04-19.png)
+
+### MACsec
+
+* 802.1AE
+
+* hop-by-hop
+  * only between MACsec peers
+  * then decrypted to allow switches to look into SGT etc
+* two keying protocols
+  * Security Association Protocol (SAP)
+    * cisco proprietary
+    * only between switches
+  * MACsec Key Agreement (MKA) protocol
+    * manages session keys and encryption keys
+    * supported between endpoints and the switch as well as between switches.
+
+#### Frame header
+
+* 16-byte MACsec Security Tag field (802.1AE header)
+* 16-byte Integrity Check Value (ICV)
+
+![](img/2024-12-03-11-07-27.png)
+
+* TCI/AN (third octet): Tag Control Information/Association Number field, designating the version number if confidentiality or integrity is used on its own
+* SL (fourth octet): Short Length field, designating the length of the encrypted data
+* Packet Number (octets 5–8): The packet number for replay protection and building of the initialization vector
+* SCI (octets 9–16): Secure Channel Identifier, for classifying the connection to the virtual port
+
+#### Downlink MACsec
+
+* encrypted link between an endpoint and a switch
+* requires 
+  * MACsec-capable switch
+  * MACsec-capable supplicant on the endpoint (such as Cisco Secure Client)
+
+#### Uplink MACsec
+
+* encrypting a link between switches with 802.1AE
+* by default, use SAP

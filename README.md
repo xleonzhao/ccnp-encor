@@ -55,7 +55,7 @@
 
 # Part VIII - Security
 
-* Chapter 25: Secure Network Access Control
+* Chapter 25: [Secure Network Access Control](./25-secure-network-access.md)
 * Chapter 26: Network Device Access Control and Infrastructure Security
 
 # Part IX - SDN
