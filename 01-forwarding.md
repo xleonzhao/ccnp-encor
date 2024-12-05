@@ -12,6 +12,13 @@
     - [check interface/port status](#check-interfaceport-status)
   - [Lab](#lab)
 - [Layer-3 forwarding](#layer-3-forwarding)
+  - [Local Network Forwarding](#local-network-forwarding)
+  - [Packet Routing](#packet-routing)
+  - [IP Address Assignment](#ip-address-assignment)
+  - [Routed Subinterfaces](#routed-subinterfaces)
+  - [Switched Virtual Interfaces (SVI)](#switched-virtual-interfaces-svi)
+  - [Routed Switch Ports](#routed-switch-ports)
+  - [Verification of IP Addresses](#verification-of-ip-addresses)
 - [Forwarding Architecture](#forwarding-architecture)
   - [Process switching](#process-switching)
     - [Data structures](#data-structures)
@@ -78,7 +85,10 @@ clear mac address-table dynamic [{address mac-address | interface interface-id |
 * each vlan is a broadcast domain
   * uniquely identified by VLAN ID
   * may across multiple switches
+  * mac table will be per VLAN
 * insert 16bits after MAC address in ethernet frame
+  * only access<->trunk and trunk<->trunk pathways see VLAN header
+  * access-endpoint see no VLAN header
 
 ![](img/vlan.png)
 
@@ -170,15 +180,89 @@ show interfaces status
 
 ## Lab
 
-* [vlan and trunk](./lab-vlan.md)
+* [vlan and trunk](./lab.md)
 
 # Layer-3 forwarding
+
+## Local Network Forwarding
 
 * ARP: IP addr -> MAC addr
 ```
 show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 ```
 * the destination MAC address is needed for the next-hop IP address.
+
+## Packet Routing
+
+* routing table
+* routes
+  * static configured
+  * default gateway
+  * learned via routing protocols
+* ARP for next-hop IP
+
+## IP Address Assignment
+
+* `ip address <ip-address> <subnet-mask> [secondary]`
+* interface IP/subnet goes to RIB with AD=0
+* A `routed interface` is basically any interface on a router
+
+## Routed Subinterfaces
+
+* a single physical routed interface multiplexed for multiple VLANs
+  * create a trunk port on the switch
+  * create a logical subinterface on the router
+    * which terminates VLAN at L3
+
+```
+R2# configure terminal
+Enter configuration commands, one per line. End with CNTL/Z.
+R2(config-if)# int g0/0/1.10
+R2(config-subif)# encapsulation dot1Q 10
+R2(config-subif)# ip address 10.10.10.2 255.255.255.0
+R2(config-subif)# ipv6 address 2001:db8:10::2/64
+R2(config-subif)# int g0/0/1.99
+R2(config-subif)# encapsulation dot1Q 99
+R2(config-subif)# ip address 10.20.20.2 255.255.255.0
+R2(config-subif)# ipv6 address 2001:db8:20::2/64
+```
+
+## Switched Virtual Interfaces (SVI)
+
+* aka _VLAN interface_
+* assign an IP address to a switched virtual interface (SVI)/VLAN interface
+* `interface vlan <vlan-id>`
+* the SVIs can be used for routing packets between VLANs without the need of an external router
+
+```
+SW1(config)# interface vlan 10
+SW1(config-if)# ip address 10.10.10.1 255.255.255.0
+SW1(config-if)# ipv6 address 2001:db8:10::1/64
+SW1(config-if)# no shutdown
+SW1(config-if)# interface vlan 99
+SW1(config-if)# ip address 10.99.99.1 255.255.255.0
+SW1(config-if)# ipv6 address 2001:db8:99::1/64
+SW1(config-if)# no shutdown
+```
+
+## Routed Switch Ports
+
+* point-to-point L3 link
+* multilayer switch port can be converted from a Layer 2 switch port to a routed switch port
+  * `no switchport`
+
+```
+SW1(config)# int gi1/0/14
+SW1(config-if)# no switchport
+SW1(config-if)# ip address 10.20.20.1 255.255.255.0
+SW1(config-if)# ipv6 address 2001:db8:20::1/64
+SW1(config-if)# no shutdown
+```
+
+## Verification of IP Addresses
+
+* `show ip interface [brief | <interface-id> | vlan <vlan-id>]`
+* `SW1# show ip interface brief | exclude unassigned`
 
 # Forwarding Architecture
 

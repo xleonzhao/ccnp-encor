@@ -12,6 +12,7 @@
 - [ch. 14 QoS](#ch-14-qos)
 - [ch. 15 IP Services](#ch-15-ip-services)
 - [ch. 16 Overlay](#ch-16-overlay)
+- [ch. 26 Network Device Access Control](#ch-26-network-device-access-control)
 
 # ch. 1 forwarding
 
@@ -74,3 +75,7 @@
 
 ![](img/2024-11-07-16-32-56.png)
 
+# ch. 26 Network Device Access Control
+
+![](img/2024-12-05-14-14-42.png)
+![](img/2024-12-05-14-16-42.png)
