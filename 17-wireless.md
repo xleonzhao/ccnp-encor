@@ -12,6 +12,12 @@
     - [Free Space Path Loss](#free-space-path-loss)
   - [Power Levels at Receiver](#power-levels-at-receiver)
 - [Carrying data over an RF signal](#carrying-data-over-an-rf-signal)
+  - [Maintaining AP–Client Compatibility](#maintaining-apclient-compatibility)
+  - [Using Multiple Radios to Scale Performance](#using-multiple-radios-to-scale-performance)
+    - [Spatial Multiplexing](#spatial-multiplexing)
+    - [Transmit Beamforming](#transmit-beamforming)
+    - [Maximal-Ratio Combining (MRC)](#maximal-ratio-combining-mrc)
+  - [Maximizing the AP–Client Throughput](#maximizing-the-apclient-throughput)
 
 # Basics
 
@@ -98,24 +104,37 @@
   * power level comparison between two different transmitters
   * why relative?
     * change exponential range into linear
-  * $dB = 10 log_{10} \frac{P2}{P1}$ where 
+  * $dB = 10 * log_{10} (\frac{P2}{P1})$ where 
     * $P1$ and $P2$ are absolute power level
     * $P1$: reference
     * $P2$: source of interest
 
 ### dB laws
 
-* Law of Zero / $dB=0$
+* Law of Zero
+  * $dB=0$
   * two absolute power values are equal.
-* Law of 3s / $dB=\pm3$
+* Law of 3s
+  * $dB=\pm3$
   * $dB=3$: power of interest is double the reference
   * $dB=–3$: power of interest is half the reference
-  * $log_{10}2 = 3$
+  * $10 * log_{10}2 = 3$
   * Whenever a power level doubles, it increases by 3 dB. Whenever it is cut in half, it decreases by 3 dB.
     * 16mW to 4mW, dB decreased by 6
-* Law of 10s / $dB=\pm10$
+* Law of 10s
+  * $dB=\pm10$
   * $dB=10$: power of interest is 10 times the reference
   * $dB=-10$: power of interest is 1/10 of the reference
+
+* LZ 
+  * if dB=20, then power difference is 2 magnitude
+    $$
+    20=10log_{10}(\frac{p1}{p2}) \newline
+    2=log_{10}(\frac{p1}{p2}) \newline
+    10^2=10^{log_{10}(\frac{p1}{p2})} \newline
+    10^2=\frac{p1}{p2}
+    $$
+  * if dB=40, then power difference is 4 magnitude
 
 ### dBm
 
@@ -132,6 +151,7 @@
 * effective isotropic radiated power (EIRP)
   * EIRP = Tx Power – Tx Cable + Tx Antenna
   * in dBm
+  * Tx only
   > Suppose a transmitter is configured for a power level of 10 dBm (10 mW). A cable with 5 dB loss connects the transmitter to an antenna with an 8 dBi gain. The resulting EIRP of the system is $10 dBm – 5 dB + 8 dBi$, or 13 dBm.
   > Even though the units appear to be different, you can safely combine them for the purposes of calculating the EIRP.
 * _dBd_ (dB-dipole)
@@ -149,7 +169,7 @@
   * $d$: distance in km
   * $f$: frequency in MHz
   * The loss is a function of distance and frequency only
-> Even at 1 meter away, the effects of free space cause a loss of around 46 dBm!
+> Even at 1 meter away, for 5G wifi, the effects of free space cause a loss of around 46 dBm!
 > For perspective, you might see a 69 dB Wi-Fi loss over a distance of about 13 to 28 meters.
 
 ## Power Levels at Receiver
@@ -157,17 +177,116 @@
 * well below 1mW / 0dBm
 * _received signal strength indicator (RSSI)_
   * IEEE 802.11
-  * 1B value: 0-255, 0: weakest
+  * 1B value: 0-255
+    * 0: weakest
   * no uint
     * but many vendors convert RSSI value into dBm in their own way
 * every receiver has a _sensitivity level_
   * e.g.: -82dBm
-* _noise floor_: the average signal strength of the noise
+  * data can be understood if power level > sensitivity level
+* _noise floor_
+  * the average signal strength of the noise
 * _signal-to-noise ratio (SNR)_
   * the difference between signal and noise
+  * in dB
+  * SNR = signal dB - noise dB
 
 ![](img/2024-11-08-12-36-23.png)
 
 > On the left side of the graph, the noise floor is –90 dBm. The resulting SNR is –54 dBm – (–90) dBm or 36 dB.
 
 # Carrying data over an RF signal
+
+* carrier signal
+  * constant f, amplitude, phase
+  * f must be preserved after adding data
+* modulation
+  * in one cycle, add 1 or 0
+  * narrowband
+    * low f signals
+    * for FM/AM radio
+  * spread spectrum
+    * data spread across a range of f
+* Direct sequence spread spectrum (DSSS)
+  * used in 2.4G wifi
+* Orthogonal Frequency Division Multiplexing (OFDM)
+  * used in 2.4G, 5G, and 6G wifi
+  * alter phase and amplitude
+    * QAM
+
+## Maintaining AP–Client Compatibility
+
+* 802.11
+  * defines carrier signals, modulation, coding, bands, channels, and data rates
+  * since 1997
+  * 802.11b/a/g/n/ac/ax
+  * Wi-Fi Alliance’s endorsement
+
+![](img/2024-12-06-17-54-24.png)
+
+> 802.11ac offers around 320 different data rates because there are so many combinations of modulation and efficiency parameters
+
+* up to 802.11ac, at any time only one talker in one channel
+* 802.11ax allows multiple talkers
+
+## Using Multiple Radios to Scale Performance
+
+* single-in, single-out (SISO)
+  * wireless devices used a single transmitter and a single receiver
+    * = a single radio chain
+* multiple-input, multiple-output (MIMO)
+  * a device can have multiple antennas, multiple transmitters, and multiple receivers
+    * = multiple radio chain
+      * to improve reception (max-radio combing)
+      * to improve transmission to specific client location (beamforming)
+      * to carry data for multiple clients
+  * TxR
+    * T: number of transmitters
+    * R: number of receivers
+  * 2x2 MIMO device
+
+![](img/2024-12-07-10-24-57.png)
+
+### Spatial Multiplexing
+
+* data distributed across two or more radio chains
+  * all operating on the same channel 
+  * but separated through spatial diversity
+  * to increase data throughput
+* to reduce interference
+  * try make signals arrived out of phase
+    * travel along slightly different paths
+      * space tx/rx antennas appropriately
+* spatial streams
+  * independent data streams multiplexed over the radio chains
+  * 3×3:2
+    * three transmitters
+    * three receivers
+    * support two unique spatial streams
+
+> Notice that a MIMO device can support a number of unique spatial streams that differs from the number of its transmitters or receivers. It might seem logical that each spatial stream is assigned to a transmitter/receiver, but that is not true. Spatial streams are processed so that they are distributed across multiple radio chains. The number of possible spatial streams depends on the processing capacity and the transmitter feature set of the device—not on the number of its radios.
+
+### Transmit Beamforming
+
+* same signal transmitted over multiple antennas to reach specific client locations
+* try make signals arrived in phase
+  * the phase of the signal is altered as it is fed into each transmitting antenna so that the resulting signals will all arrive in phase at a specific receiver
+* explicit feedback from receiver
+* tx keeps a table (receiver, phase adjustment)
+
+### Maximal-Ratio Combining (MRC)
+
+* receiving device can use multiple antennas and radio chains to receive the multiple transmitted copies of the signal
+  * one copy may be better than the other
+  * one copy may be better for a time
+* produce one resulting signal
+
+## Maximizing the AP–Client Throughput
+
+* Tx and Rx need agree on modulation method (and the resulting data rate)
+* negotiate it dynamically
+  * based on current RSSI and SNR
+  * dynamic rate shifting (DRS)
+    * also known as link adaptation, adaptive modulation and coding (AMC), and rate adaptation
+  
+  ![](img/2024-12-07-10-59-08.png)
