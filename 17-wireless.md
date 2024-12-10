@@ -18,6 +18,33 @@
     - [Transmit Beamforming](#transmit-beamforming)
     - [Maximal-Ratio Combining (MRC)](#maximal-ratio-combining-mrc)
   - [Maximizing the AP–Client Throughput](#maximizing-the-apclient-throughput)
+- [Wireless Infrastructure](#wireless-infrastructure)
+  - [Autonomous Deployment](#autonomous-deployment)
+  - [Cisco AP Operation](#cisco-ap-operation)
+  - [Cisco Wireless Deployments](#cisco-wireless-deployments)
+    - [Centralized Wireless Deployment](#centralized-wireless-deployment)
+    - [Cloud-Based Wireless Deployment](#cloud-based-wireless-deployment)
+    - [Distributed Wireless Deployment](#distributed-wireless-deployment)
+    - [Controller-less Deployment](#controller-less-deployment)
+  - [Pairing Lightweight APs and WLCs](#pairing-lightweight-aps-and-wlcs)
+    - [onboarding a new AP](#onboarding-a-new-ap)
+    - [AP States](#ap-states)
+    - [Discovering a WLC](#discovering-a-wlc)
+      - [router helper](#router-helper)
+    - [Selecting a WLC](#selecting-a-wlc)
+    - [Maintaining WLC Availability](#maintaining-wlc-availability)
+  - [Segmenting Wireless Configurations](#segmenting-wireless-configurations)
+  - [Leveraging Antennas for Wireless Coverage](#leveraging-antennas-for-wireless-coverage)
+    - [Radiation Patterns](#radiation-patterns)
+    - [Gain](#gain)
+      - [Beamwidth](#beamwidth)
+    - [Polarization](#polarization)
+      - [Production of Electromagnetic Waves](#production-of-electromagnetic-waves)
+    - [Omnidirectional Antennas](#omnidirectional-antennas)
+    - [Directional Antennas](#directional-antennas)
+      - [patch antenna](#patch-antenna)
+      - [Yagi antenna](#yagi-antenna)
+      - [Parabolic Dish Antenna](#parabolic-dish-antenna)
 
 # Basics
 
@@ -290,3 +317,351 @@
     * also known as link adaptation, adaptive modulation and coding (AMC), and rate adaptation
   
   ![](img/2024-12-07-10-59-08.png)
+
+# Wireless Infrastructure
+
+* lightweight mode
+* _BSS_: Basic Service Set
+* _SSID_: Service Set Identifier
+* Control and Provisioning of Wireless Access Points (CAPWAP)
+  * RFC 5415
+    * access controller (AC) = WLC
+    * wireless termination point (WTP) = AP
+
+> Cisco has offered two WLC platforms. The most recent is based on hardware that runs the IOS XE operating system, while its predecessor was based on the AireOS operating system. From the AP’s perspective, both platforms connect to it via CAPWAP tunnels
+
+## Autonomous Deployment
+
+* Autonomous APs
+  * self-contained, offer standalone BSS
+  * need config a management IP and join the mgmt vlan
+  * same SSID on many APs
+  * users roaming only at L2
+  * shortest path for wifi users with same AP
+
+![](img/2024-12-09-09-11-20.png)
+
+## Cisco AP Operation
+
+* AP need WLC to work together to offer BSS
+  * split-MAC arch.
+    * AP do 802.11
+    * WLC do the management
+  * AP<->WLC control/data go through CAPWAP tunnel
+  * each AP has a management IP
+    * to terminate CAPWAP tunnel
+  * wifi user <-> AP <-(CAPWAP)-> WLC <-> destination
+* AP mode:
+  * Local
+    * default mode
+    * providing BSSs and connecting WiFi clients
+  * FlexConnect
+    * CAPWAP only for control traffic
+    * if control down, AP still can switch traffic locally
+  * Monitor
+    * receiver only in promiscuous mode
+    * detect intrusions, rogue AP, etc.
+  * Sniffer
+    * capture traffic and send to sth. like wireshark
+  * Rogue device detector
+    * correlating MAC addresses heard on both wired and wifi network
+      * Rogue devices are those that appear on both networks
+  * Bridge
+    * P2P or P2MP
+    * two APs in bridge mode can bridge two locations separated by distance
+    * multiple APs in bridge mode can form a mesh network 
+  * Flex+Bridge
+    * FlexConnect operation is enabled on a mesh AP
+  * Se-Connect
+    * spectrum analysis to analyze interferences
+      * MetaGeek Chanalyzer
+      * Cisco Spectrum Expert
+
+> a lightweight AP is normally in local mode when it is providing BSSs and allowing client devices to associate to wireless LANs. When an AP is configured to operate in one of the other modes, local mode (and the BSSs) is disabled.
+
+## Cisco Wireless Deployments
+
+### Centralized Wireless Deployment
+
+* WLC located near the core layer
+  * for users to reach internet, data center
+* A typical centralized WLC can support up to 6000 APs and up to 64,000 wireless clients
+
+![](img/2024-12-09-11-46-17.png)
+
+* data path may not be optimal
+  * wifi user -> AP -(CAPWAP)-> WLC -(CAPWAP)-> AP -> wifi user
+  * RTT(AP<->WLC) should < 100ms
+    * AP may timeout connectionto WLC
+
+### Cloud-Based Wireless Deployment
+
+* WLC located in private/public cloud
+  * for public cloud, APs must operate only in FlexConnect mode
+    * b/c RTT
+
+![](img/2024-12-09-11-50-25.png)
+
+### Distributed Wireless Deployment
+
+* WLC located near access layer
+
+![](img/2024-12-09-11-52-07.png)
+
+* 1x WLC can support up to 250 APs and 5,000 wireless clients
+
+### Controller-less Deployment
+
+* WLC is embedded in an AP itself
+  * embedded wireless controllers (EWCs)
+* EWC typically supports up to 100 APs and up to 2,000 wireless clients
+
+![](img/2024-12-09-11-55-12.png)
+
+## Pairing Lightweight APs and WLCs
+
+### onboarding a new AP
+
+* connect AP to switch
+* configure switch port
+  * access mode
+  * VLAN
+  * inline power setting
+* AP power up and looking for WLC to bind
+
+### AP States
+
+![](img/2024-12-09-12-03-54.png)
+
+1. AP boots
+   * get an IP from DHCP or static config
+2. WLC discovery
+3. CAPWAP tunnel
+   * try build tunnel with one or more WLCs
+     * will pick one to bind
+   * Datagram Transport Layer Security (DTLS) for control messages
+   * authenticate each other via digital certificates
+     * who pre-configured AP certs?
+4. WLC join
+   * CAPWAP Join Request message
+   * CAPWAP Join Response message
+5. Download image
+   * after download, reboot and got to step 1
+   * be cautious!
+     * existing AP reboots
+       * it may start downloading for a while
+     * WLC code upgrade
+       * disruptive
+       * in a maintenance window
+     * WLC reboot
+       * all APs join a different WLC which may run a different version
+         * keep WLC version in sync
+   * pre-downloading
+     * WLC download new image, no reboot yet
+     * AP will also download it
+     * then WLC reboot, AP no need download, it already has it
+6. Download config
+   * RF
+   * SSID
+   * security
+   * QoS
+7. Run state
+
+### Discovering a WLC
+
+* build a list of candidate WLCs to join via
+  * Broadcast on the local subnet to solicit controllers
+    * CAPWAP Discovery Request
+      * broadcast to subnet
+      * unicast to known controller's IP
+      * UDP port 5246
+  * Prior knowledge of WLCs
+    * if AP has previously joined a WLC
+      * AP remembers WLCs it contacted
+      * WLC also send a list of available WLCs
+  * DHCP and DNS information to suggest a list of controllers
+    * DHCP option 43
+    * dns name: CISCO-CAPWAP-CONTROLLER.localdomain
+  * Plug-and-play with Cisco DNA Center
+
+#### router helper
+
+* if AP and WLC on different subnets
+
+```
+router(config) # ip forward-protocol udp 5246
+router(config) # interface vlan vlan-number
+router(config-int) # ip helper-address WLC1-MGMT-ADDR
+router(config-int) # ip helper-address WLC2-MGMT-ADDR
+```
+
+### Selecting a WLC
+
+1. If the AP has previously joined a controller and has been configured
+2. If a controller has been configured as a master controller, it responds
+3. join the least-loaded WLC
+   * load = currently joined AP / max AP allowed
+     * max AP allowed is defined by platform or license
+
+> If an AP discovers a controller but gets rejected, it may be the controller reached its max
+
+* AP also can configure its priority to influence controller
+  * low (default), medium, high, critical
+  * controller kick some AP out to make room for high pri. AP
+
+### Maintaining WLC Availability
+
+* keepalive/heartbeat
+  * sent from AP to WLC
+    * every 30s
+      * configurable from 1-30s
+  * WLC must answer
+    * If a keepalive is not answered, an AP escalates the test by sending four more keepalives at 3-second intervals.
+      * configurable from 1-10s
+      * default WLC failure detection: 35s (should be 43s?)
+      * fastest WLC failure detection: 6s
+* AP switchover when WLC fails
+  * every AP stores primary, secondary, and tertiary controller fields
+  * switchover in that order
+* WLC HA
+  * stateful switchover (SSO) redundancy
+    * SSO groups WLC into HA pairs
+      * one active, one hot-standby
+      * sync tunnels, AP states, client associations, etc.
+  * AP only need know active WLC
+  * active/standby switchover is transparent
+
+## Segmenting Wireless Configurations
+
+* config AP
+  * Things that affect the AP controller and CAPWAP relationship and FlexConnect behavior on a per-site basis
+  * Things that define the RF operation on each wireless band
+  * Things that define each wireless LAN and security policies
+* IOS XE
+  * profiles
+    * site
+      * AP-WLC CAPWAP parameters
+      * VLAN
+    * RF
+      * radio operation related parameters
+      * dynamic transmit power
+      * channel assignment algorithms
+      * coverage hole detection
+    * policy
+      * WALN
+        * a list of SSIDs
+        * WLAN security
+      * policy
+        * traffic control (QoS, fw, etc.)
+  * tags
+    * tag individual AP to profiles
+      * AP (join) profile
+      * Flex profile
+    * defaults
+      * `default-site-tag`: maps to `default-ap-profile` and `default-flex-profile`
+      * `default-rf-tag`: maps to the controller’s global RF configuration
+      * `default-policy-tag`: maps to nothing, there is no default
+    * customization
+      1. Configure AP and Flex profiles and map them to site tags.
+      2. Configure RF profiles and map them to RF tags.
+      3. Configure WLAN and policy profiles and map them to policy tags.
+      4. Assign the appropriate site, RF, and policy tags to the APs.
+
+![](img/2024-12-10-09-20-44.png)
+
+
+## Leveraging Antennas for Wireless Coverage
+
+* When an alternating current is applied to an antenna, an electromagnetic wave is produced.
+* client density
+  * number of devices an AP can support
+
+### Radiation Patterns
+
+* A plot that shows the relative signal strength around an antenna
+* 3D sphere -> 2D plot (polar plot)
+  * XY: H plane / horizontal (azimuth) plane
+  * XZ: E plane / elevation plane
+  * polar plot does not depict signal propagation
+  * polar plot depict direction of signal strength
+    * It is a snapshot of the antenna's radiation strength at a **constant** radius around the antenna, showing how energy is distributed in different directions.
+
+![](img/2024-12-10-10-10-20.png)
+
+### Gain
+
+* antenna amplify the signal
+  * not by adding extra power
+  * but by shaping/focusing the RF energy in a certain direction
+* isotropic antenna
+  * cannot focus at all
+  * 0 dBi
+* omnidirectional
+  * donut-like
+  * cover wider area
+* directional
+  * more gain
+
+#### Beamwidth
+
+* measure of antenna's focus
+
+![](img/2024-12-10-10-30-54.png)
+
+### Polarization
+
+* electric field's orientation
+  * vertical
+  * horizontal
+* Tx/Rx's polarization need match
+
+![](img/2024-12-10-10-39-00.png)
+
+> a simple length of wire that is pointing vertically will produce a wave that oscillates up and down in a vertical direction
+
+![](img/2024-12-10-10-46-26.png)
+
+#### Production of Electromagnetic Waves
+
+* [source](https://pressbooks.bccampus.ca/introductorygeneralphysics2phys1207opticsfirst/chapter/24-2-production-of-electromagnetic-waves/)
+
+![](img/2024-12-10-10-51-26.png)
+
+At time t=0, there is the maximum separation of charge, with negative charges at the top and positive charges at the bottom, producing the maximum magnitude of the electric field (or E-field) in the upward direction. One-fourth of a cycle later, there is no charge separation and the field next to the antenna is zero, while the maximum E-field has moved away at speed c.
+
+As the process continues, the charge separation reverses and the field reaches its maximum downward value, returns to zero, and rises to its maximum upward value at the end of one complete cycle. The outgoing wave has an amplitude proportional to the maximum separation of charge. Its wavelength λ is proportional to the period of the oscillation and, hence, is smaller for short periods or high frequencies. (As usual, wavelength and frequency f are inversely proportional.)
+
+* [khan academy](https://youtu.be/1OUW4nbrZgc)
+
+### Omnidirectional Antennas
+
+* extends further in the H plane than in the E plane
+  * donut shape radiation pattern
+* dipole
+  * two wires 
+  * +2 ~ +5 dBi
+
+![](img/2024-12-10-11-19-41.png)
+
+### Directional Antennas
+
+#### patch antenna
+
+* gain
+  * 6 to 8 dBi in the 2.4 GHz
+  * 7 to 10 dBi at 5 GHz
+
+#### Yagi antenna
+
+* gain
+  * 10 to 14 dBi
+
+![](img/2024-12-10-11-35-59.png)
+![](img/2024-12-10-11-36-16.png)
+
+#### Parabolic Dish Antenna
+
+* gain
+  * 20 to 30 dBi
+
+![](img/2024-12-10-11-39-23.png)
