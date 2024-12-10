@@ -45,6 +45,14 @@
       - [patch antenna](#patch-antenna)
       - [Yagi antenna](#yagi-antenna)
       - [Parabolic Dish Antenna](#parabolic-dish-antenna)
+- [Understanding Wireless Roaming and Location Services](#understanding-wireless-roaming-and-location-services)
+  - [Roaming Between Autonomous APs](#roaming-between-autonomous-aps)
+  - [Intracontroller Roaming](#intracontroller-roaming)
+  - [Intercontroller Roaming](#intercontroller-roaming)
+    - [Layer 2 Roaming](#layer-2-roaming)
+    - [Layer 3 Roaming](#layer-3-roaming)
+    - [Scaling Mobility with Mobility Groups](#scaling-mobility-with-mobility-groups)
+  - [Locating Devices in a Wireless Network](#locating-devices-in-a-wireless-network)
 
 # Basics
 
@@ -665,3 +673,103 @@ As the process continues, the charge separation reverses and the field reaches i
   * 20 to 30 dBi
 
 ![](img/2024-12-10-11-39-23.png)
+
+# Understanding Wireless Roaming and Location Services
+
+## Roaming Between Autonomous APs
+
+* client actively scans channels and sends probe requests to discover candidate APs
+* if client found the signal degrades, it starts roaming algorithm
+* client can send Association Request and Reassociation Request frames to an AP
+  * Association Requests are used to form a new association, 
+  * Reassociation Requests are used to roam from one AP to another, preserving the client’s original association status.
+* If old AP still has any leftover wireless frames destined for the client after the roam, it forwards them to new AP over the wired infrastructure
+  * because that is where the client’s MAC address now resides
+    * how old AP know which new AP the client moved to
+
+## Intracontroller Roaming
+
+* WLC handles roaming process
+  * update the table <AP, client>
+    * affect which CAPWAP tunnel to use
+  * only take ~10ms to complete roaming
+* client does the same as with autonomous APs
+* client (re)authentication: most time-consuming business
+  * client <-> AP <-> WLC <-> RADIUS
+* fast roaming
+  * Cisco Centralized Key Management (CCKM)
+    * One controller maintains a database of clients and keys
+    * provides them to other controllers and their APs when needed during client roaming 
+    * requires Cisco Compatible Extensions (CCX) support from clients
+  * Key caching
+    * client maintains a list of keys used with prior AP associations
+    * presents them as it roams
+    * The destination AP must be present in this list
+      * limited to eight AP/key entries.
+  * 802.11r
+    * client cache auth. server's key
+    * present that to new AP
+
+## Intercontroller Roaming
+
+### Layer 2 Roaming
+
+* WLCs are in same VLAN/subnet
+* local-to-local roam
+* client keep its IP address
+* < 20ms roaming
+
+### Layer 3 Roaming
+
+* WLCs in different VLAN/subnet
+* local-to-foreign roam
+* controller<->controller CAPWAP tunnel
+  * anchor controller: original controller
+  * foreign controller: roamed-to controller
+* client keep its IP address
+* guest users
+  * config one controller to be static anchor
+  * other controllers will direct guests to static anchor via CAPWAP
+
+![](img/2024-12-10-17-16-48.png)
+
+### Scaling Mobility with Mobility Groups
+
+* mobility group
+  * group of controllers
+    * up to 24 controllers
+* controllers within same group
+  * support
+    * L2/L3 roaming
+    * CCKM/Key caching/802.11r
+    * credentials are cached and shared
+* controllers not in same group
+  * credentials are not cached, nor shared
+  * client need re-auth during roaming
+* mobility domain
+  * including multiple mobility groups
+  * each controller maintains a list of
+    * its own MAC
+    * other controllers' MAC (in or not in same group)
+    * up to 72 controllers
+  * client cannot roam if move from WLC A to WLC B which is not in A's list
+    * client need re-associate and re-auth
+
+## Locating Devices in a Wireless Network
+
+* AP use the received signal strength (RSS) as a measure of distance to client
+* free space path loss (FSPL)
+  * $FSPL(dB) = 20log_{10}(d) + 20log_{10}(f) + 32.44$
+  * so $d = f(FSPL)$
+* 3 or more APs do the measure
+  * client is in intersect area
+  * client keep sending 802.11 Probe Requests
+    * on every possible channel
+    * can be ID'd by MAC addr
+
+![](img/2024-12-10-15-39-13.png)
+
+* RF fingerprinting
+  * mainly for indoor
+  * RF calibration template
+    * walking and measuring attenuation
