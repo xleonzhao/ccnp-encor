@@ -23,11 +23,11 @@
 
 * Chapter 6: [IP Routing Essentials](./06-routing-basics.md)
 * Chapter 7: [EIGRP](./07-EIGRP.md)
-* Chapter 8: [OSPF](./08-10-OSPF.md)
-* Chapter 9: [Advanced OSPF](./08-10-OSPF.md)
-* Chapter 10: [OSPFv3](./08-10-OSPF.md)
-* Chapter 11: [BGP](./11-12-BGP.md)
-* Chapter 12: [Advanced BGP]((./11-12-BGP.md))
+* Chapter 8: [OSPF](./08-10-OSPF.md#basics)
+* Chapter 9: [Advanced OSPF](./08-10-OSPF.md#advanced-ospf)
+* Chapter 10: [OSPFv3](./08-10-OSPF.md#ospfv3)
+* Chapter 11: [BGP](./11-12-BGP.md#basics)
+* Chapter 12: [Advanced BGP](./11-12-BGP.md#advanced)
 * Chapter 13: [Multicast](./13-multicast.md)
 
 # Part IV - Services
@@ -41,10 +41,10 @@
 
 # Part VI - Wireless
 
-* Chapter 17: [Wireless Signals and Modulation](./17-wireless.md)
-* Chapter 18: Wireless Infrastructure
-* Chapter 19: Understanding Wireless Roaming and Location Services
-* Chapter 20: Authenticating Wireless Clients
+* Chapter 17: [Wireless Signals and Modulation](./17-wireless.md#basics)
+* Chapter 18: [Wireless Infrastructure](./17-wireless.md#wireless-infrastructure)
+* Chapter 19: [Understanding Wireless Roaming and Location Services](./17-wireless.md#understanding-wireless-roaming-and-location-services)
+* Chapter 20: [Authenticating Wireless Clients](./17-wireless.md#authenticating-wireless-clients)
 * Chapter 21: Troubleshooting Wireless Connectivity
 
 # Part VII - Architecture
@@ -61,8 +61,8 @@
 # Part IX - SDN
 
 * Chapter 27: [Virtualization](./27-SDN.md)
-* Chapter 28: [Foundational Network Programmability Concepts](./28-29-automation.md)
-* Chapter 29: [Introduction to Automation Tools](./28-29-automation.md)
+* Chapter 28: [Foundational Network Programmability Concepts](./28-29-automation.md#network-programmability-concepts)
+* Chapter 29: [Introduction to Automation Tools](./28-29-automation.md#automation-tools)
 
 ---
 

@@ -423,11 +423,11 @@
     * message format / protocol for encapsulated transport for authentication parameters
   * EAP method / EAP type
     * authentication methods
-  * EAP over LAN
+  * EAP over LAN (EAPoL)
     * layer 2 encapsulation protocol defined by 802.1x
     * for transport EAP messages
   * RADIUS
-    * AAA used by EAP
+    * provide AAA to EAP
 * roles
   * supplicant
     * client
@@ -443,12 +443,20 @@
   
 ![](img/2024-12-02-14-55-00.png)
 
+* EAPoL ethernet frame:
+  * Destination MAC Address
+  * Source MAC Address
+  * EtherType (0x888E)
+  * EAPOL Protocol Data
 * process
 
 ![](img/2024-12-02-14-57-41.png)
 
 #### EAP methods
 
+* how to auth. user?
+  * by a shared secret
+  * by a rsa-like keys/certs
 * EAP challenge-based authentication method
   * Extensible Authentication Protocol-Message Digest 5 (EAP-MD5)
     * hide the credentials in a hash
