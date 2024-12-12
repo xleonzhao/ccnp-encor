@@ -59,6 +59,15 @@
   - [Authenticating with EAP](#authenticating-with-eap)
     - [Four-way handshake](#four-way-handshake)
   - [Authenticating with WebAuth](#authenticating-with-webauth)
+- [Troubleshooting Wireless Connectivity](#troubleshooting-wireless-connectivity)
+  - [First Step](#first-step)
+  - [Troubleshooting Client Connectivity from the WLC](#troubleshooting-client-connectivity-from-the-wlc)
+    - [Checking the Client’s Association and Signal Status](#checking-the-clients-association-and-signal-status)
+      - [Signal Strength](#signal-strength)
+      - [Signal Quality (SNR)](#signal-quality-snr)
+    - [Checking](#checking)
+    - [Troubleshooting the Client](#troubleshooting-the-client)
+  - [Troubleshooting Connectivity Problems at the AP](#troubleshooting-connectivity-problems-at-the-ap)
 
 # Basics
 
@@ -855,3 +864,82 @@ As the process continues, the charge separation reverses and the field reaches i
     * LWA with passthrough, requiring user acknowledgment
 * Central Web Authentication (CWA)
   * dedicated web server
+
+# Troubleshooting Wireless Connectivity
+
+## First Step
+
+* gather information
+  * client wireless MAC address
+  * client location
+* ask questions if
+  * client is within RF range of an AP and asks to associate
+  * client authenticates
+  * client requests and receives an IP address
+
+![](img/2024-12-12-10-00-39.png)
+
+## Troubleshooting Client Connectivity from the WLC
+
+* IOS-XE based WLC GUI
+  * search client MAC address
+
+### Checking the Client’s Association and Signal Status
+
+![](img/2024-12-12-10-06-56.png)
+
+* WLAN name (SSID)
+* AP name
+
+#### Signal Strength
+
+* per ChatGPT
+
+| Signal Strength (dBm) | Description   | Typical Use                                    |
+|------------------------|---------------|-----------------------------------------------|
+| -30 dBm to -50 dBm    | Excellent     | Optimal performance, close to AP              |
+| -50 dBm to -60 dBm    | Good          | Sufficient for most tasks                     |
+| -60 dBm to -70 dBm    | Fair          | Reliable for basic tasks, may lag for HD streaming or VoIP |
+| -70 dBm to -80 dBm    | Poor          | Marginally usable, might experience drops or latency |
+| Below -80 dBm         | Unusable      | Connection likely unstable or lost            |
+
+#### Signal Quality (SNR)
+
+| SNR (dB)       | Description   | Typical Use                                    |
+|-----------------|---------------|-----------------------------------------------|
+| 40 dB or higher | Excellent     | Optimal performance, supports all applications |
+| 25 dB to 40 dB  | Good          | Reliable for most tasks, including HD streaming and VoIP |
+| 15 dB to 25 dB  | Fair          | Usable for basic tasks, may lag for high-bandwidth applications |
+| Below 15 dB     | Poor          | Marginally usable, likely to experience drops or latency |
+
+### Checking 
+
+* client properties
+  * IP address
+  * policy profile in use on the AP
+  * WLAN/SSID being used
+  * connection uptime
+  * session timeout
+  * current transmission rate
+  * QoS
+  * roaming activity
+  * ...
+* AP properties
+  * auth. algorithms
+  * ...
+* security settings
+
+### Troubleshooting the Client
+
+* Radioactive Trace
+  * WLC's logs involving client MAC addr
+
+## Troubleshooting Connectivity Problems at the AP
+
+* a working lightweight AP
+  * must have connectivity to its access layer switch
+  * must have connectivity to its WLC, unless in FlexConnect mode
+* tag/profile
+
+![](img/2024-12-12-10-35-36.png)
+
