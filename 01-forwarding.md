@@ -7,6 +7,7 @@
     - [Access Ports](#access-ports)
     - [Trunk Ports](#trunk-ports)
     - [Native VLAN](#native-vlan)
+    - [VLAN switching](#vlan-switching)
   - [Troubleshooting](#troubleshooting)
     - [check mac table](#check-mac-table)
     - [check interface/port status](#check-interfaceport-status)
@@ -86,9 +87,8 @@ clear mac address-table dynamic [{address mac-address | interface interface-id |
   * uniquely identified by VLAN ID
   * may across multiple switches
   * mac table will be per VLAN
-* insert 16bits after MAC address in ethernet frame
-  * only access<->trunk and trunk<->trunk pathways see VLAN header
-  * access-endpoint see no VLAN header
+* VLAN header
+  * 16bits after MAC address in ethernet frame
 
 ![](img/vlan.png)
 
@@ -123,10 +123,6 @@ SW1(config-if)# switchport access vlan 99
 ### Trunk Ports
 
 * Trunk ports can **carry** multiple VLANs.
-* Trunk ports are typically used when multiple VLANs need connectivity between a switch and another switch, router, or firewall and use only one port. 
-* Upon receipt of the packet on the remote trunk link, the headers are examined,  traffic is associated to the proper VLAN, then the 802.1Q headers are removed, traffic is forwarded to the next port, based on the MAC address for that VLAN.
-* *LZ: trunk ports see untagged coming in, let untagged coming out?*
-  * no, trunk ports just carry VLAN IDs in ethernet frame
 
 ```
 SW1(config)# interface gi1/0/2
@@ -155,20 +151,46 @@ switchport trunk allowed vlan 1,10,20,99
   * The Cisco security hardening guidelines recommend changing the native VLAN to something other than VLAN 1. More specifically, it should be set to a VLAN that is not used at all.
   * so everything has to be tagged properly when entering the network
 
+
+### VLAN switching
+
+* based on per-VLAN mac table
+  * recall mac addr are learned dynamically
+```
+SW1# show mac address-table dynamic
+Mac Address Table
+Vlan Mac Address    Type    Ports
+------------------------------------
+1    0081.c4ff.8b01 DYNAMIC Gi1/0/2
+1    189c.5d11.9981 DYNAMIC Gi1/0/3
+1    189c.5d11.99c7 DYNAMIC Gi1/0/3
+10   5067.ae2f.6480 DYNAMIC Gi1/0/7
+10   7069.5ad4.c220 DYNAMIC Gi1/0/13
+10   e8ed.f3aa.7b98 DYNAMIC Gi1/0/12
+20   189c.5d11.9981 DYNAMIC Gi1/0/3
+20   7069.5ad4.c221 DYNAMIC Gi1/0/14
+```
+
+* endpoint -> access port -> trunk port
+  * incoming frames are tagged internally to associate them with the configured VLAN
+    * unless the frame belongs to native VLAN
+  * check _dst mac addr_ against _VLAN mac table_ to find the outgoing port
+    * if no mac addr found in mac table, do ARP (broadcasting) within VLAN
+  * add VLAN headers when frames are sent out of the trunk port
+* trunk -> trunk
+  * VLAN headers are typically retained when frames are received / sent out of a trunk port
+* trunk -> access -> endpoint
+  * incoming frame still cariies the VLAN header
+  * switch check the mac table and find the outgoing port is an access port
+  * remove VLAN headers when frames are sent out of the access port to endpoints
+
 ## Troubleshooting
 
 ### check mac table
 
 ```
 SW1# show mac address-table dynamic
-Mac Address Table
-VlanMac Address Type    Ports
-----------------------------
-10081.c4ff.8b01 DYNAMIC Gi1/0/2
-1189c.5d11.9981 DYNAMIC Gi1/0/3
-1189c.5d11.99c7 DYNAMIC Gi1/0/3
 ```
-
 * If multiple MAC addresses appear on the same port, you know that a switch, hub, or server with a virtual switch is connected to that switch port.
 
 ### check interface/port status
