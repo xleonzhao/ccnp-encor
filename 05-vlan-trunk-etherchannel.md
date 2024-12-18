@@ -55,8 +55,8 @@ SW1(config)# vtp domain CISCO
 09:08:12.085: %SW_VLAN-6-VTP_DOMAIN_NAME_CHG: VTP domain name changed to CiscoPress. Changing VTP domain name from CCNP to CISCO
 SW1(config)# vtp mode server
 Setting device to VTP Server mode for VLANS.
-SW1(config)# vtp password PASSWORD
-Setting device VTP password to PASSWORD
+SW1(config)# vtp password pnet
+Setting device VTP password to pnet
 SW1(config)# exit
 SW1# vtp primary
 This system is becoming primary server for feature vlan
