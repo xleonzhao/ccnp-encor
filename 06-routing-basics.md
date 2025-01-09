@@ -3,6 +3,7 @@
   - [EIGRP](#eigrp)
   - [Path Vector Algorithms](#path-vector-algorithms)
   - [Link State Algorithms](#link-state-algorithms)
+    - [periodical refreshing](#periodical-refreshing)
 - [Path Selection](#path-selection)
   - [prefix length](#prefix-length)
   - [administrative distance (AD)](#administrative-distance-ad)
@@ -73,6 +74,12 @@
 * ISIS
   * Link State Packets (LSP)
   * TLVs
+
+### periodical refreshing
+
+* as a link state routing protocol, ospf re-advertises LSAs periodically (30 min)
+* however, for efficiency purpose, it only advertises LSAs its originated, not LSAs learned from other routers
+  * on the other hand, during the initial routing data exchange, all LSAs known to the router are advertised 
 
 # Path Selection
 

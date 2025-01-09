@@ -32,7 +32,8 @@
 
 * successor route: best path
 * FD: path cost
-* feasibility condition: any learned routes with a cost < my current best path = backup routes
+  * FD = RD from next hop + cost to the next hop
+* feasibility condition: RD < FD(best path) -> backup routes
 
 ## Topology Table
 
@@ -67,12 +68,15 @@ R1# show ip eigrp topology
 
 # Path Metric Calculation
 
+* lowest metric wins
+
 $$
 Metric = 256 * [(K_1 * BW + \frac{K_2 * BW}{256 – Load} + K_3 * Delay) * \frac{K_5}{K_4 + Reliability}]
 $$
 
 * _BW_: $10^7$/(slowest link speed in the path)
   * $10^7$ referrs to 10G, measured in Kbps
+  * slowest link is the actual bw one can actually use
 * _Delay_ is the total measure of delay in the path, measured in tens of microseconds (µs)
 * $K_1$ and $K_2$ are reference bw
 * By default, $K_1$ and $K_3$ have the value 1, and $K_2$, $K_4$, and $K_5$ are set to 0
@@ -101,9 +105,11 @@ $$
 ## load balancing
 
 * support both ECMP and non-equal cost multiple path
-* variance value: like threshold, FD below it will be installed into RIB
-
-> Dividing the feasible successor metric by the successor route metric provides the variance multiplier. The variance multiplier is a whole number, so any remainders should always round up.
+  * as long as installed in the EIGRP RIB, the routes will be used for routing
+* variance value: FD for a route multiplied by the EIGRP _variance multiplier_. 
+  * Any feasible successor’s FD with a metric below the EIGRP variance value is installed into the RIB. 
+  * EIGRP installs multiple routes up to the maximum number of ECMP routes
+* variance multiplier: dividing the feasible successor metric by the successor route metric provides the variance multiplier.
 
 # Failure Detection and Timers
 

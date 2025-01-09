@@ -20,6 +20,7 @@
 
 # VLAN trunking protocol (VTP)
 
+* cisco proprietary
 * config once, populate automatically
 * VTP Domain
   * VTP server
@@ -73,29 +74,37 @@ show vtp status
 
 ## about `revision`
 
-> It is very important that every switch that connects to a VTP domain has the VTP revi- sion number reset to 0. Failing to reset the revision number on a switch could result in the switch providing an update to the VTP server. This is not an issue if VLANs are added but is catastrophic if VLANs are removed because those VLANs will be removed throughout the domain.
+> It is very important that every switch that connects to a VTP domain has the VTP revision number reset to 0. Failing to reset the revision number on a switch could result in the switch providing an update to the VTP server. This is not an issue if VLANs are added but is catastrophic if VLANs are removed because those VLANs will be removed throughout the domain.
 
 > Which of the following is a common disastrous VTP problem with moving a switch from one location to another?
-> b.The moved switch sends an update to the VTP server and deletes VLANs.
+> b. The moved switch sends an update to the VTP server and deletes VLANs.
 
 # Dynamic Trunking Protocol
 
 * dynamically forming a trunk port
 * two switches negotiate via Dynamic Trunking Protocol
+* cisco proprietary
 
 ## config
 
-* Trunk mode
-  * `switchport mode trunk`
-* Dynamic desirable
-  * `switchport mode dynamic desirable`
-  * acts as an access port
-  * but listen for and advertise DTP packets
-* Dynamic auto
-  * `switchport mode dynamic auto`
-  * acts as an access port
-  * but listen for DTP packets
-  * default mode on Catalyst switches
+* 3 modes:
+  * Trunk mode
+    * `switchport mode trunk`
+  * Dynamic desirable
+    * `switchport mode dynamic desirable`
+    * acts as an access port
+    * but listen for and generate DTP packets
+  * Dynamic auto
+    * `switchport mode dynamic auto`
+    * acts as an access port
+    * only listen for DTP packets, not generate DTP packets
+    * default mode on Catalyst switches
+* 5 combinations to make a trunk link
+  * `dynamic auto` and `dynamic desirable`
+  * `dynamic desirable` and `dynamic desirable`
+  * `trunk` and `trunk`
+  * `trunk` and `dynamic auto`
+  * `trunk` and `dynamic desirable`
 * verify
   * `show interface [interface-id] trunk`
 * disable negotiation

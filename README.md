@@ -45,7 +45,7 @@
 * Chapter 18: [Wireless Infrastructure](./17-wireless.md#wireless-infrastructure)
 * Chapter 19: [Understanding Wireless Roaming and Location Services](./17-wireless.md#understanding-wireless-roaming-and-location-services)
 * Chapter 20: [Authenticating Wireless Clients](./17-wireless.md#authenticating-wireless-clients)
-* Chapter 21: Troubleshooting Wireless Connectivity
+* Chapter 21: [Troubleshooting Wireless Connectivity](./17-wireless.md#troubleshooting-wireless-connectivity)
 
 # Part VII - Architecture
 

@@ -126,10 +126,10 @@ VLAN Name                             Status    Ports
 
 ```
 switchport trunk encapulation dot1q
-switchport trunk native vlan 999
-switchport trunk allowed vlan 1,20,40,50,60,100
 switchport mode trunk
 switchport nonegotiate
+switchport trunk allowed vlan 1,20,40,50,60,100
+switchport trunk native vlan 999
 ```
 
 ## Task 3: Assign VLANs
@@ -141,14 +141,15 @@ switchport access vlan 200
 
 ! or 
 ! switchport host
-!   switchport mode will be set to access
-!   spanning-tree portfast will be enabled
-!   channel group will be disabled
 ```
 
 * if vlan 200 not configured prior, it will be automatically created
 
 ## Task 4: Routing Between VLAN's
+
+* so far, hosts in same vlan can talk to each other
+* but for hosts in different vlans to talk to each other, we must goto layer 3 and start IP routing
+  * router will be the default gw, and dhcp server
 
 ### config vlan interface / SVI on switch
 

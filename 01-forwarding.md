@@ -2,7 +2,7 @@
 - [layer 2 forwarding](#layer-2-forwarding)
   - [MAC Table](#mac-table)
     - [manually change the mac-table](#manually-change-the-mac-table)
-    - [Timer ?](#timer-)
+    - [Timer for mac address table entries](#timer-for-mac-address-table-entries)
   - [VLAN](#vlan)
     - [Access Ports](#access-ports)
     - [Trunk Ports](#trunk-ports)
@@ -75,10 +75,11 @@ mac address-table static mac-address vlan vlan-id {drop | interface interface-id
 clear mac address-table dynamic [{address mac-address | interface interface-id | vlan vlan-id}]
 ```
 
-### Timer ?
+### Timer for mac address table entries
 
-* age timer
+* _aging-time_
   * default: 300s
+  * change it: `mac address-table aging-time <seconds>`
 
 ## VLAN
 
@@ -142,19 +143,23 @@ switchport trunk allowed vlan 1,10,20,99
 
 ### Native VLAN
 
-* Any traffic that is transmitted or received on a trunk port without the 802.1Q VLAN tag is associated to the native VLAN. 
-* Any traffic associated to the native VLAN will flow across the trunk port untagged. 
-* The default native VLAN is VLAN 1.
+* On a trunk link, any untagged frames received are assumed to belong to the native VLAN
+* All switch control plane /management traffic is advertised using native VLAN 1:
+  * Cisco Discovery Protocol (CDP)
+  * Link Layer Discovery Protocol (LLDP)
+  * Spanning Tree Protocol (STP)
+  * VTP (VLAN Trunking Protocol)
+  * PAgP/LACP (for EtherChannel negotiation)
+* The default native VLAN is VLAN 1
   * the default can be changed by `switchport trunk native vlan vlan-id`
-  * The native VLAN should match on both ports for traffic to be transmitted for that VLAN across the trunk link.
-  * All switch control plane traffic is advertised using VLAN 1.
-  * The Cisco security hardening guidelines recommend changing the native VLAN to something other than VLAN 1. More specifically, it should be set to a VLAN that is not used at all.
-  * so everything has to be tagged properly when entering the network
-
+* The native VLAN should match on both ports for traffic to be transmitted for that VLAN across the trunk link.
+* The Cisco security hardening guidelines recommend changing the native VLAN to something other than VLAN 1.
+  * it should be set to a VLAN that is not used at all.
+  * everything should be tagged properly when entering the network
 
 ### VLAN switching
 
-* based on per-VLAN mac table
+* based on **per-VLAN mac table** against _dest mac address_
   * recall mac addr are learned dynamically
 ```
 SW1# show mac address-table dynamic
