@@ -280,4 +280,69 @@ Which two networks match the prefix match specification? (Choose two.)
   * > It is not advertised to other routers.
   * > It is a 16-bit value assigned locally on the router.
   * It is not advertised between eBGP peers and is typically used to influence the next-hop address for outbound traffic.
+    * LZ: this should also be correct, even ChatGPT says so
   * It is a well-known discretionary path attribute and is included with path advertisements throughout an AS.
+
+* 28: Which two statements describe private BGP communities? (Choose two.)
+  * > A private BGP community requires a route map configuration.
+  * Private BGP communities are used to signify no transit networks.
+  * An organization needs to register for a private BGP community.
+  * > Private BGP communities are within the range of 0xFFFF0000 to 0xFFFFFFFF.
+    * LZ: this is completely wrong, this range is for well-known attributes
+  * A private BGP community uses the first 16 bits to represent its AS and the second 16 bits to represent a pattern.
+    * LZ: this is correct
+
+> Private BGP communities follow a particular convention where the first 16 bits represent the AS of the community origination, and the second 16 bits represent a pattern defined by the originating AS. A private BGP community pattern can vary from organization to organization, does not need to be registered, and can signify geographic locations for one AS while signifying a method of route advertisement in another AS.
+
+* 29: Refer to the exhibit. Given the above configuration commands, which two statements are true? (Choose two.)
+  * RTA will set the atomic aggregate attribute to false.
+  * > RTA will set the atomic aggregate attribute to true.
+  * RTA will send the supernet route as well as all other specific BGP routes that belong to that supernet.
+  * > RTA will create the supernet route even if no other specific routes belonging to the supernet are in the route table.
+    * LZ: there is a static aggregated prefix configured
+  * RTA will send the supernet route and suppress the more specific routes known to BGP.
+    * LZ: there is also a dynamic aggregated prefix configured, but it only will be created if there is a more specifics in the routing table
+
+![](img/2025-01-10-16-51-40.png)
+
+> Route summarization on BGP edge routers via dynamic method is configured by specifying an aggregation network prefix. The aggregate-address command advertises the aggregated route (the supernet) in addition to the specific original component network prefixes. By using the optional summary-only keyword, the component network prefixes in the summarized network range are suppressed. When a BGP router summarizes a route, it does not advertise the AS_Path information from before the aggregation. This effect is indicated by the atomic aggregate attribute. The atomic aggregate attribute indicates that a loss of path information has occurred.
+
+* 30: Refer to the exhibit. A network administrator issues the show bgp ipv4 unicast command to check the routes in the BGP table. What does the indication of 0.0.0.0 under Next Hop mean? Chapters 11 - 12: BGP Exam (Answers) 13
+  * The route is the best route for the network prefix.
+  * > The route is originated from a connected network to the router.
+  * The route is learned through a static route.
+  * The route is learned through IGP.
+
+![](img/2025-01-10-17-02-01.png)
+
+> As the BGP prefix is installed into the Loc-RIB table, the following BGP PAs are set, depending on the RIB prefix type:
+> * Connected network : The next-hop BGP attribute is set to 0.0.0.0, the BGP origin attribute is set to i (IGP), and the BGP weight is set to 32,768.
+> * Static route or routing protocol : The next-hop BGP attribute is set to the next-hop IP address in the RIB, the BGP origin attribute is set to i (IGP), the BGP weight is set to 32,768, and the MED is set to the IGP metric.
+>
+> BGP origin attributes
+> * IGP origin (i)
+> * EGP origin (e)
+> * Incomplete origin (?)
+
+* 31: A network administrator is configuring route summarization for received routes before advertising to the next peer with the commands:
+```
+R1(config)# router bgp 65500
+R1(config-router)# aggregate-address 172.16.0.0 255.255.240.0 as-set summary-only
+R1(config-router)# end
+```
+* How will the aggregate route be advertised after the commands are entered?
+  * The aggregate route will be advertised together with the smaller component network prefixes.
+  * The advertised aggregate route will increase the hop counts as it indicates multiple autonomous systems.
+  * The aggregate route will be advertised as an atomic aggregate route.
+  * > The aggregate route will be advertised with previous BGP path information.
+
+* 34: A network administrator is configuring an ACL to match networks for BGP route filtering. The administrator creates an ACE permit ip 10.0.64.0 0.0.63.0 255.255.255.0 0.0.0.192 . Which two networks match the ACE? (Choose two.)
+  * 10.0.128.0/25
+  * 10.0.126.0/25
+  * 10.0.130.0/24
+  * > 10.0.64.0/24
+  * 10.0.63.0/26
+
+> One method for conditional matching of routes in BGP is through extended ACLs. When extended ACLs are used for this purpose, the source fields match against the network portion of the route, and the destination fields match against the network mask. The network portion of the matching networks is 10.0.64.0 through 10.0.127.0. The network mask portion is /24 through /26.
+> LZ: 127=64+63
+> LZ: 192: the first two bits are arbitrary, /24+0 -> 24+2
