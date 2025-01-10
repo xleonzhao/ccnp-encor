@@ -1,6 +1,7 @@
 - [ch. 1-5: total 47, wrong: 2, arguable: 1](#ch-1-5-total-47-wrong-2-arguable-1)
 - [ch. 6: 26/34](#ch-6-2634)
 - [ch. 8-10: 18/34](#ch-8-10-1834)
+- [ch. 11-12: 20/36](#ch-11-12-2036)
 
 # ch. 1-5: total 47, wrong: 2, arguable: 1
 
@@ -105,6 +106,7 @@ What is the reported distance of the successor route for 172.18.3.0/24?
 
 # ch. 8-10: 18/34
 
+* https://itexamanswers.net/ccnp-encor-v8-chapters-8-10-ospf-test-online.html
 * 3: Which three requirements are necessary for two OSPFv2 routers to form an adjacency? (Choose three.)
   * > The OSPF hello or dead timers on each router must match.
   * > The link interface subnet masks must match.
@@ -208,3 +210,74 @@ What is the reported distance of the successor route for 172.18.3.0/24?
 
 > Each OSPF router maintains a link state database (LSDB) for each area it participates in.
 
+# ch. 11-12: 20/36
+
+* https://itexamanswers.net/ccnp-encor-v8-chapters-11-12-bgp-test-online.html
+* __IPv6 address are hexadecimal__
+
+* 6: Refer to the exhibit. A network administrator is configuring BGP on a router. Which configuration step is needed in order to establish the BGP session with the neighbor router?
+  * Configure the keepalive timer.
+  * > Initialize and activate the address family.
+  * Advertise the networks attached to the router.
+  * Restart the BGP process.
+
+> For a BGP session to initiate, one address family for a neighbor must be activated. On Cisco routers the IPv4 address family is activated by default; however, it may cause confusion when working with other address families. The BGP router configuration command `no bgp default ip4-unicast` disables the automatic activation of the IPv4 AFI.
+
+![](img/2025-01-10-15-15-43.png)
+
+* 8: Which BGP routers will become peers and share routing information?
+  * BGP routers that are configured with the same network command
+  * BGP routers that are configured with the same peer command
+  * > BGP routers that are configured with the neighbor command
+  * BGP routers that share routing information with all routers in the same AS by default
+
+* 9: Which two statements describe the configuration differences when MP-BGP is applied using the IPv6 protocol compared to IPv4 protocol? (Choose two.)
+  * > The IPv6 address family must be initialized and the neighbor activated.
+  * > Routers with only IPv6 addressing must have the BGP RID statically defined.
+  * IPv4 addresses cannot be used to define a BGP RID.
+  * IPv6 uses multicast to establish neighbor sessions.
+  * Routers with only IPv6 addressing must use AS numbers beyond 65535.
+
+ > The BGP configuration rules in IPv4 apply to IPv6, except that the IPv6 address family must be initialized, and the neighbor is activated. Routers with only IPv6 addressing must statically define the BGP RID to allow sessions to form.
+
+* 13: Which BGP state is the one where BGP initiates the TCP connection and sends an Open message to the sender?
+  * Passive
+  * > Connect
+  * OpenSent
+  * Established
+
+* 18: A company is deploying BGP multihoming to provide network connection redundancy for several branch locations. One of the network design objectives is to provide deterministic routing among company locations during failover by providing a specific location to handle branch transit traffic. Which two design criteria should be applied to the specific facility? (Choose two.)
+  * > The bandwidth can be sized according to the traffic needs.
+  * The facility should be in a central place from all company locations.
+  * OSPF is the preferred IGP for the facility.
+  * > The routing pattern is bidirectional and predictable.
+  * BGP route policies should apply to only allow for local BGP routes to be advertised.
+
+> Multihomed environments should be configured so that branch routers cannot act as transit routers. In most designs, transit routing of traffic from another branch is undesirable, as WAN bandwidth may not be sized accordingly. If transit behavior is required, it should be restricted to the data centers or specific locations with these design criteria: Proper routing design can accommodate outages. Bandwidth can be sized accordingly. The routing pattern is bidirectional and predictable.
+
+* 20: A network administrator is configuring a prefix list with the command
+`ipv6 prefix-list IPV6-1 seq 5 permit 2001:db8:abcd:30::/60 ge 61 le 63`
+Which two networks match the prefix match specification? (Choose two.)
+  * `2001:db8:abcd:30::/60`
+  * > `2001:db8:abcd:34::/62`
+  * `2001:db8:abcd:20::/62`
+  * > `2001:db8:abcd:36::/63`
+  * `2001:db8:abcd:60::/64`
+
+* 22: Refer to the exhibit. Considering the route map configuration for BGP, which statement describes the condition for a network prefix to match the route map TEST?
+  * The network prefix needs to match both ACL1 and ACL2 independently of the processing action.
+  * If the processing action is permit, the network prefix needs to match either ACL1 or ACL2.
+  * > The network prefix needs to match either ACL1 or ACL2 independently of the processing action.
+  * If the processing action is deny, the network prefix needs to match both ACL1 and ACL2.
+
+![](img/2025-01-10-16-02-04.png)
+
+> In route map configuration, if there are multiple variables (ACLs, prefix lists, tags, and so on) configured for a specific route map sequence, only one variable must match for the prefix to qualify. The Boolean logic uses an OR operator for this configuration. The processing action is performed only after a match occurs.
+
+* 24: Which three statements describe the weight attribute for BGP? (Choose three.)
+  * > It is a Cisco-defined attribute.
+  * It is a nontransitive attribute that uses a 32-bit value called metric.
+  * > It is not advertised to other routers.
+  * > It is a 16-bit value assigned locally on the router.
+  * It is not advertised between eBGP peers and is typically used to influence the next-hop address for outbound traffic.
+  * It is a well-known discretionary path attribute and is included with path advertisements throughout an AS.
