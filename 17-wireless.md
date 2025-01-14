@@ -381,7 +381,7 @@
     * providing BSSs and connecting WiFi clients
   * FlexConnect
     * CAPWAP only for control traffic
-    * if control down, AP still can switch traffic locally
+    * if control down, AP still can switch data traffic locally
   * Monitor
     * receiver only in promiscuous mode
     * detect intrusions, rogue AP, etc.
@@ -438,7 +438,9 @@
 
 * WLC is embedded in an AP itself
   * embedded wireless controllers (EWCs)
+  * or both WLC+AP embedded in an access switch
 * EWC typically supports up to 100 APs and up to 2,000 wireless clients
+* Cisco term: Mobility Express
 
 ![](img/2024-12-09-11-55-12.png)
 
@@ -473,10 +475,11 @@
    * after download, reboot and got to step 1
    * be cautious!
      * existing AP reboots
-       * it may start downloading for a while
+       * downloading image takes time
      * WLC code upgrade
+       * all APs will download new image and reboot
        * disruptive
-       * in a maintenance window
+       * should do it in a maintenance window
      * WLC reboot
        * all APs join a different WLC which may run a different version
          * keep WLC version in sync
@@ -496,7 +499,7 @@
 * build a list of candidate WLCs to join via
   * Broadcast on the local subnet to solicit controllers
     * CAPWAP Discovery Request
-      * broadcast to subnet
+      * broadcast to subnet, or
       * unicast to known controller's IP
       * UDP port 5246
   * Prior knowledge of WLCs
@@ -692,6 +695,9 @@ As the process continues, the charge separation reverses and the field reaches i
 
 # Understanding Wireless Roaming and Location Services
 
+* if client need re-associate? -> client IP need be changed?
+* if client need re-auth? -> time consuming
+
 ## Roaming Between Autonomous APs
 
 * client actively scans channels and sends probe requests to discover candidate APs
@@ -742,6 +748,8 @@ As the process continues, the charge separation reverses and the field reaches i
 * controller<->controller CAPWAP tunnel
   * anchor controller: original controller
   * foreign controller: roamed-to controller
+  * the tunnel "tethers" the client to its original anchor controller (and original IP subnet)
+    * anchor controller continues to handle the client's traffic, i.e., the traffic is routed through the anchor controller
 * client keep its IP address
 * guest users
   * config one controller to be static anchor

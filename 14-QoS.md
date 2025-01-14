@@ -315,18 +315,23 @@ policy-map INBOUND-MARKING-POLICY
 * used by policer and shaper
 * terms
   * Committed Information Rate (_CIR_): The policed traffic rate (**bps**), defined in the traffic contract.
+  * Committed Burst Size (_Bc_): The maximum size of the CIR token bucket, and the maximum amount of traffic that can be sent within a Tc. 
+    * $Bc = CIR * (Tc / 1000)$
+    * _Bc_ >= largest possible IP packet size
+  * Token bucket: A bucket that accumulates tokens 
+    * cost 1 token to send 1 bit
+    * maximum number of tokens: _Bc_ when using a single token bucket
+    * tokens are added into the bucket at a fixed rate (the _CIR_)
   * Committed Time Interval (_Tc_): The time interval, in milliseconds (ms), over which the committed burst (Bc) is sent. 
     * $Tc = (Bc / CIR ) × 1000$
     * 8ms < _Tc_ < 125ms
       * with fast link speed, tokens will be burned out quickier than refilled
       * if _Tc_ too large, packets have to wait longer til bucket got refilled 
-  * Committed Burst Size (_Bc_): The maximum size of the CIR token bucket, measured in **bytes**, and the maximum amount of traffic that can be sent within a Tc. 
-    * $Bc = CIR * (Tc / 1000)$
-    * _Bc_ >= largest possible IP packet size
-  * Token: 8 bits
-  * Token bucket: A bucket that accumulates tokens 
-    * maximum number of tokens: _Bc_ when using a single token bucket
-    * tokens are added into the bucket at a fixed rate (the _CIR_)
+
+> $Bc$ is the capacity of the token bucket.
+> $CIR$ is the rate at which tokens are added.
+> $Tc$ is the time it takes to fill the bucket to its capacity.
+
 * If there are not enough tokens in the token bucket to send the packet, the traffic conditioning mechanism can take one of the following actions:
   * Buffer the packets while waiting for enough tokens to accumulate in the token bucket (traffic shaping)
   * Drop the packets (traffic policing)
@@ -335,7 +340,7 @@ policy-map INBOUND-MARKING-POLICY
 ![](img/2024-10-29-10-32-22.png)
 
 * Time interval at line rate = (Bc [bits] / Interface speed [bps]) × 1000
-  * Bc = 12Mbps
+  * Bc = 12Mb
   * IF speed = 1Gbps
   * CIR = 120Mbps
   * packet size = 1500B = 12Kb

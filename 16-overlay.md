@@ -160,12 +160,12 @@ R1# show interfaces tunnel 100 | include Tunnel.*is|Keepalive|Tunnel s|Tunnel p
 
 * protocol: 50
 * _payload_ is the portion of the original packet that is encapsulated within the IPsec headers
-* support confidentiality and NAT traversal
+* support confidentiality, authentication and NAT traversal
 
 #### Two modes of transport
 
-* _Tunnel mode_: Encrypts the entire original packet and adds a new set of IPsec headers. These new headers are used to route the packet and also provide overlay functions.
 * _Transport mode_: Encrypts and authenticates only the packet payload. This mode does not provide overlay functions and routes based on the original IP headers.
+* _Tunnel mode_: Encrypts the entire original packet and adds a new set of IPsec headers. These new headers are used to route the packet and also provide overlay functions.
 
 ![](img/2024-11-06-11-53-10.png)
 

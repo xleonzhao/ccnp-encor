@@ -255,6 +255,9 @@
 * PIM Dense Mode (PIM-DM)
 * PIM Sparse Mode (PIM-SM)
 * PIM Sparse Dense Mode
+  * dynamically determine which one to use
+    * if RP is known, go PIM-SM
+    * else go PIM-DM
 * PIM Source Specific Multicast (PIM-SSM)
 * PIM Bidirectional Mode (Bidir-PIM)
 * ASM: any-source multicast = PIM-DM + PIM-SM

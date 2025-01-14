@@ -2,6 +2,10 @@
 - [ch. 6: 26/34](#ch-6-2634)
 - [ch. 8-10: 18/34](#ch-8-10-1834)
 - [ch. 11-12: 20/36](#ch-11-12-2036)
+- [ch. 13-14: 16/32](#ch-13-14-1632)
+- [ch. 15-16 (24/36)](#ch-15-16-2436)
+- [ch. 17-19: 23/33](#ch-17-19-2333)
+- [ch. 20-21: 31/33](#ch-20-21-3133)
 
 # ch. 1-5: total 47, wrong: 2, arguable: 1
 
@@ -339,6 +343,7 @@ R1(config-router)# end
 * 34: A network administrator is configuring an ACL to match networks for BGP route filtering. The administrator creates an ACE permit ip 10.0.64.0 0.0.63.0 255.255.255.0 0.0.0.192 . Which two networks match the ACE? (Choose two.)
   * 10.0.128.0/25
   * 10.0.126.0/25
+    * LZ: this one should be correct as well
   * 10.0.130.0/24
   * > 10.0.64.0/24
   * 10.0.63.0/26
@@ -346,3 +351,273 @@ R1(config-router)# end
 > One method for conditional matching of routes in BGP is through extended ACLs. When extended ACLs are used for this purpose, the source fields match against the network portion of the route, and the destination fields match against the network mask. The network portion of the matching networks is 10.0.64.0 through 10.0.127.0. The network mask portion is /24 through /26.
 > LZ: 127=64+63
 > LZ: 192: the first two bits are arbitrary, /24+0 -> 24+2
+
+# ch. 13-14: 16/32
+
+* https://itexamanswers.net/ccnp-encor-v8-chapters-13-14-multicast-and-qos-test-online.html
+
+* 3: Which is a characteristic of PIM sparse mode?
+  * It uses a pruning mechanism to stop the flow of unwanted multicast traffic on interfaces with no downstream neighbors.
+  * > It requires an RP on the network to act as the root of the shared distribution tree.
+  * It builds the multicast tree by flooding traffic out all interfaces.
+  * It is designed for networks where receivers are located on every subnet in the network.
+
+* 9: An administrator has configured and enabled multicast together with PIM sparse mode on all VLANs on the network. Which feature helps to reduce multicast traffic being broadcast on the access layer switches?
+  * source registration
+  * PIM Pruning
+  * > IGMP snooping
+  * SPT switchover
+
+> IGMP snooping stops multicast traffic from being broadcast on the access layer switches by examining IGMP joins that are sent by receivers and maintaining a table of interfaces to IGMP joins.
+
+* 10: Which two IGMPv3 modes are used to signal membership to a multicast host group? (Choose two.)
+  * preclude
+  * join
+  * > include
+  * rendezvous
+  * > exclude
+  * leave
+
+> The two IGMP modes that are used to signal membership are Include mode (the receiver announces membership to a multicast group and provides a include list) and Exclude mode (receiver announces membership to multicast group and provides exclude list).
+
+* 11: Which statement describes a characteristic of IP multicast routing?
+  * PIM hello messages are sent every 60 seconds by default out each PIM enabled interface.
+  * > PIM dense mode flood and prune behavior repeats every three minutes.
+  * PIM sparse mode builds the multicast tree through flooding of traffic out every interface.
+  * PIM sparse mode and PIM dense mode require an RP on the network.
+
+* 13: Which two statements about Protocol Independent Multicast (PIM) are true? (Choose two.)
+  * > Three of the forwarding modes for PIM are PIM dense mode (PIM-DM), PIM sparse mode (PIM-SM), and PIM sparse-dense mode.
+  * > PIM is a multicast routing protocol that makes packet-forwarding decisions independent of the unicast IP routing protocol that is running in the network.
+  * PIM should be configured on the device that hosts the source of the muticast traffic.
+    * PIM should be configured on the FHR
+  * PIM sparse mode is most useful when there are few senders, many receivers, and the volume of multicast traffic is high.
+  * PIM should be configured only on the first and the last hop routers in the multicast tree.
+  * PIM does not require an IGP protocol to be configured in the network.
+
+* 16: Which nonproprietary mechanism does PIM use to discover and announce RP set information for each group prefix for all the routers in a PIM domain?
+  * Static RP
+  * > BSR
+  * RPF
+  * Auto-RP
+
+* 18: What two fields are available in IPv4 and IPv6 headers to mark packets for QoS? (Choose two.)
+  * > Traffic Class
+  * Class of Service
+    * layer 2 uses CoS
+  * > Type of Service
+  * Priority
+  * VLAN ID
+
+* 20: Which is a QoS model that a network engineer would implement to ensure a source to destination quality of service standard for a specified data flow?
+  * best effort
+  * low latency queuing
+  * differentiated services
+  * class-based weighted fair queuing
+  * > integrated services
+
+> Best effort is the default packet forwarding design and provides no QoS. The differentiated services model enforces and applies QoS mechanisms on a hop-by-hop basis, not source to destination. Class-based weighted fair queuing and low latency queuing are queuing algorithms.
+
+* 21: What would be the Tc value in ms for a 1 Gbps interface configured with a policer defined with a CIR of 150 Mbps and a Bc of ~~12~~15 Mb?
+  * 10,000 ms
+  * 1000 ms
+  * > 100 ms
+  * 10 ms
+
+> The Tc value is calculated by using the formula Bc (bits)/ CIR (bps) X 1000
+> TC = (15 Mb/150 Mbps) X 1000 
+> Tc = (15,000,000 bits/150,000,000 bps) X 1000 
+> Tc = 100 ms
+
+* 22: What statement describes the Class of Service field?
+  * > It is a Layer 2 field.
+  * It is a field that is 6 bits long.
+  * It is a field that is 8 bits long.
+  * It is a Layer 1 field.
+
+* 25: Which two procedures should be implemented when deploying VoIP in a campus network? (Choose two.)
+  * voice and data traffic in the same VLAN and mark the traffic for high priority treatment
+  * a traffic shaping QoS policy to guarantee minimum delay for the voice traffic
+  * > packet marking for voice traffic with a 802.1p CoS value of 5
+  * priority queuing with voice traffic given the high-priority queue
+  * > a voice class low-latency queuing (LLQ) QoS policy
+
+* 27: Match the queuing algorithm with its description. (Not all options apply.)
+
+![](img/2025-01-13-10-23-49.png)
+
+* 28: What is the value of the DSCP marker for video traffic on a WLAN?
+  * > AF41
+  * O
+  * AF11
+  * EF
+
+* 29: Which statement describes NBAR2?
+  * NBAR2 can identify a variety of protocols and applications by using up to Layer 6 data.
+  * NBAR2 supports only scavenger traffic.
+  * > NBAR2 uses MQC to match traffic to specific protocols.
+  * NBAR2 does not require monthly protocol packs to identify new and emerging applications.
+
+> NBAR2 is a deep packet inspection engine that uses Layer 3 through 7 data to identify a variety of protocols. it can operate in either Protocol discovery mode or Modular QoS CLI (MQC) mode.
+
+# ch. 15-16 (24/36)
+
+* https://itexamanswers.net/ccnp-encor-v8-chapters-15-16-ip-services-and-vpns-test-online.html
+
+* 8: Which router command is required to configure VRRP to support IPv6?
+  * standby 1 ipv6 FE80::1:1
+  * > fhrp version vrrp v3
+  * standby 6 ipv6 autoconfig
+  * vrrp 22 address-family ipv6
+
+* 11: Which two NTP details are displayed by issuing the show ntp associations command on a switch configured to use NTP? (Choose two.)
+  * reference time
+  * > NTP server IP address
+  * > reference clock IP address
+  * "Clock is synchronized" statement
+    * this is shown in `show ntp status`
+  * NTP uptime
+
+* 17: Refer to the exhibit. What statement is true about the output of the show standby command?
+  * > The router is currently forwarding packets.
+  * This router is tracking two properly operating interfaces.
+  * The current priority of this router is 120.
+  * This router is in the HSRP down state because its tracked interfaces are down.
+
+![](img/2025-01-13-12-00-17.png)
+
+> The output shows that the active router is local and indicates that this router is the active router and is currently forwarding packets.
+
+* 21: How many bytes of overhead are added to each IP packet while it is transported through a GRE tunnel?
+  * 8
+  * 32
+  * 16
+  * > 24
+
+* 22: Refer to the exhibit. Which IP address is configured on the physical interface of the CORP router?
+  * 10.1.1.2
+  * 209.165.202.134
+  * > 209.165.202.133
+  * 10.1.1.1
+
+![](img/2025-01-13-12-10-55.png)
+
+* 26: Which LISP header is used to provide a secure boundary between multiple organizations?
+  * outer LISP UDP header
+  * outer LISP IP header
+  * > Instance ID
+  * RLOC
+
+> The 24-bit Instance ID field is a value used to provide device- and path-level network virtualization to prevent IP address duplication within a LISP site or provide a secure boundary between multiple organizations.
+
+* 27: How is routing handled within a LISP site?
+  * through the use of virtual tunnels
+  * through the use of virtual controllers
+  * > through the use of an interior routing protocol
+  * through the use of RLOCs
+
+* 34: Which algorithm is considered insecure for use in IPsec encryption?
+  * AES
+  * > 3DES
+  * SHA-1
+    * LZ: this one is also not secure, use SHA-3 or SHA-256 instead
+  * RSA
+
+* 36: What is the first step in establishing an IPsec VPN?
+  * creation of a secure tunnel to negotiate a security association policy
+  * > detection of interesting traffic
+  * negotiation of ISAKMP policies
+  * creation of an IPsec tunnel between two IPsec peers
+
+> Before an IPsec tunnel can be configured, interesting traffic must be detected. Interesting traffic is defined by an access list permit statement. Once interesting traffic is detected, by matching the access list, IKE phase 1 negotiations can begin that will establish the tunnel.
+
+# ch. 17-19: 23/33
+
+* 5: What technological factor limits the number of unique spatial streams that can be supported by a MIMO device?
+  * the number of radios
+  * the number of transmitters
+  * the number of receivers
+  * > the processing capacity
+
+> A MIMO device can distribute spatial streams across multiple radio chains and does not have to assign a unique spatial stream to an individual transmitter/receiver. The number of possible spatial streams depends on the processing capacity and the transmitter feature set of the wireless device.
+
+* refer [here](./17-wireless.md#spatial-multiplexing)
+* https://www.youtube.com/watch?v=5IigzGDBYB0
+
+* 13: What are two benefits of deploying a centralized wireless LAN topology? (Choose two.)
+  * decreasing the cable length requirement when utilizing lightweight access points in an embedded wireless network topology
+  * > convenience of enforcing security policies for all wireless users
+  * lowering the investment cost when utilizing lightweight access points in a Mobility Express topology
+  * > maximizing the number of APs that can join a single WLC
+  * decreasing the RTT between two wireless clients on a single access point
+
+> A centralized or unified wireless LAN topology utilizes a centralized WLC location that provides easy enforcement of security policies and the ability to maximize the number of APs that can join to it. The centralized topology also supports user mobility because all of the APs associate to the same WLC no matter how many APs the user device associates with while roaming.
+> * __Mobility Express__ topology: one AP also hosts the WLC functionality
+
+* 15: Which protocol and port number are used when an AP sends a unicast CAPWAP Discovery Request packet to the IP address of a controller? (Choose two.)
+  * > UDP
+  * > 5246
+
+* 17: What information is needed by an AP for stateful switchover (SSO) using high availability with a standby WLC?
+  * the standby WLC
+  * the group name of the SSO pair
+  * the IP address of both the primary and standby WLC
+  * > the active primary WLC
+
+* 18: Why would an AP that successfully discovers a WLAN controller be denied from joining that WLC?
+  * The name of the WLC is different from the pre-configured name on the Cisco lightweight AP.
+  * > The WLC already has the maximum number of APs joined to it.
+  * The WLC has a software release downloaded on it that is different from the lightweight AP software.
+  * The WLC is configured to be the standby WLC in an SSO group.
+
+* 20: A wireless engineer accesses the WLC and configures a lightweight access point to function as a sniffer. Which two functions will be performed by the lightweight access point in this mode? (Choose two.)
+  * > The lightweight AP will forward captured traffic to a PC running network analyzer software.
+  * The lightweight AP will check for IDS events and determine the position of stations through location-based services.
+  * > The lightweight AP will dedicate all of the physical radios to receiving 802.11 traffic from other sources.
+  * The lightweight AP will correlate MAC addresses heard on the wired network with those heard over the air to detect rogue devices.
+    * LZ: that's a different mode than sniffer
+  * The lightweight AP will offer one or more functioning BSSs on a specific channel.
+
+* 26: A company deploys a Cisco wireless network over a large campus. The wireless network uses lightweight APs and multiple WLCs. A network technician walks around the campus to verify that wireless clients can roam smoothly between APs bound to different WLCs and assigned different VLANs and IP subnets. The technician verifies that while the client roams around campus, the client retains the same VLAN and IP address assigned. Which roaming scenario is the technician verifying?
+  * intracontroller roaming
+  * local-to-local roaming
+  * Layer 2 roaming
+  * > Layer 3 roaming
+
+> In a Cisco wireless network, when a client initiates an intercontroller roam, the two controllers involved can compare the VLAN numbers that are assigned to the respective WLAN interfaces. If the VLAN IDs are the same, the client undergoes a Layer 2 intercontroller roam (also called local-to-local roam) and can continue to use the original IP address on the new controller. If the two VLAN IDs differ, the controllers arrange a Layer 3 roam that will allow the client to keep using the same IP address.
+
+* 26: A company deploys a Cisco wireless network over the campus. Wireless network access is needed for visitors to access the internet while on campus. What are two best practices in setting up APs and WLCs for secure wireless connections for visitors? (Choose two.)
+  * only using private IP addresses for APs and clients
+  * using static IP addressing for clients to better locate visitor clients
+  * > putting the anchor controller specific for visitors behind firewall
+  * > configuring a WLC to be a static anchor controller specific for visitors to associate
+  * deploying autonomous APs for visitors
+
+* 28: Which two Cisco location solutions can work with Cisco management platforms to provide real-time location services for a wireless network? (Choose two.)
+  * Prime Infrastructure
+  * > Mobility Services Engine
+  * > DNA Space
+  * DNA Center
+  * Identity Services Engine
+
+> Cisco APs and WLCs can integrate with management platforms like Cisco Prime Infrastructure or DNA Center, along with location servers like Cisco Mobility Services Engine (MSE), Cisco Connected Mobile Experiences (CMX), or Cisco DNA Spaces to gather location information in real time and present that information in a relevant way.
+
+# ch. 20-21: 31/33
+
+* 14: Which three statements concerning wireless network security are accurate? (Choose three.)
+  * > A wireless client first associates with an AP and then authenticates for network access.
+  * WPA2-Personal prevents attackers from being able to use a key to unencrypt data that was already transmitted over the air.
+  * Every device using the WLAN must be configured with an identical pre-shared key, unless PSK with ISE is used.
+    * LZ: this one should be correct as well
+    * P.595: "_be aware that every device using the WLAN must be configured with an identical pre-shared key, unless PSK with Identity Services Engine (ISE) is used._"
+  * WPA versions use a three-way handshake procedure to exchange a pre-shared key between a client and an AP.
+  * > Open authentication uses no client or AP verification.
+  * > WPA1, WPA2, and WPA3 support both PSK or 802.1x client authentication modes.
+
+* 30: A network administrator opens the Client View screen on the WLC to review the performance data of a wireless client. The administrator notices that the client has a connection score value of 78%. What can the administrator conclude from this information?
+  * The client has a received signal strength of 78% at the AP.
+  * The client is using its wireless connection only 78% of the time.
+  * > The client is currently using a data rate that is 78% of its maximum capability.
+  * The client is currently in the bottom 78% of all wireless clients in data usage.
+
+> The connection score shown in the Client View window is determined by dividing the current data rate of the client by the lower maximum supported date rate. It is a measure of how much of its maximum capability it is using. If the client had a maximum rate of 100 Mbps, then a connection score of 78% would mean the client is currently using 78 Mbps.
