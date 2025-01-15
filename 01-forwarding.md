@@ -16,9 +16,9 @@
   - [Local Network Forwarding](#local-network-forwarding)
   - [Packet Routing](#packet-routing)
   - [IP Address Assignment](#ip-address-assignment)
-  - [Routed Subinterfaces](#routed-subinterfaces)
-  - [Switched Virtual Interfaces (SVI)](#switched-virtual-interfaces-svi)
-  - [Routed Switch Ports](#routed-switch-ports)
+    - [Routed Subinterfaces](#routed-subinterfaces)
+    - [Switched Virtual Interfaces (SVI)](#switched-virtual-interfaces-svi)
+    - [Routed Switch Ports](#routed-switch-ports)
   - [Verification of IP Addresses](#verification-of-ip-addresses)
 - [Forwarding Architecture](#forwarding-architecture)
   - [Process switching](#process-switching)
@@ -234,7 +234,7 @@ show ip arp [mac-address | ip-address | vlan vlan-id | interface-id]
 * interface IP/subnet goes to RIB with AD=0
 * A `routed interface` is basically any interface on a router
 
-## Routed Subinterfaces
+### Routed Subinterfaces
 
 * a single physical routed interface multiplexed for multiple VLANs
   * create a trunk port on the switch
@@ -254,12 +254,13 @@ R2(config-subif)# ip address 10.20.20.2 255.255.255.0
 R2(config-subif)# ipv6 address 2001:db8:20::2/64
 ```
 
-## Switched Virtual Interfaces (SVI)
+### Switched Virtual Interfaces (SVI)
 
 * aka _VLAN interface_
 * assign an IP address to a switched virtual interface (SVI)/VLAN interface
 * `interface vlan <vlan-id>`
-* the SVIs can be used for routing packets between VLANs without the need of an external router
+* the SVIs can be used for **routing packets between VLANs** without the need of an external router
+  * For simplicity and efficient design, use only one switch as the routing point
 
 ```
 SW1(config)# interface vlan 10
@@ -272,11 +273,12 @@ SW1(config-if)# ipv6 address 2001:db8:99::1/64
 SW1(config-if)# no shutdown
 ```
 
-## Routed Switch Ports
+### Routed Switch Ports
 
-* point-to-point L3 link
-* multilayer switch port can be converted from a Layer 2 switch port to a routed switch port
+* must be multilayer switch
+* a port can be converted from a Layer 2 switch port to a routed switch port
   * `no switchport`
+* e.g.: for building a point-to-point L3 link
 
 ```
 SW1(config)# int gi1/0/14

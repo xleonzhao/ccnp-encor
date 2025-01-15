@@ -59,7 +59,9 @@
     * connect PINs together
 * secure domains
   * central management
+    * coordinates policies, objects, and alerting
   * security intelligence
+    * enables an infrastructure to enforce policy dynamically
   * compliance
     * PCI DSS 3.0 (Payment Card Industry Data Security Standard version 3.0)
       * security standards for organizations that handle cardholder data to protect against fraud and breaches.
@@ -298,7 +300,7 @@
   * illicit cryptomining
   * unknown malware
   * inside threats
-* scaled 
+* scaled
   * into the cloud (when used in combination with Cisco Secure Cloud Analytics)
   * across the network
   * to branch locations
@@ -420,12 +422,12 @@
 * components
   * Extensible Authentication Protocol (EAP)
     * RFC 4187
-    * message format / protocol for encapsulated transport for authentication parameters
+    * general framework to define auth process / message format / protocol
   * EAP method / EAP type
     * authentication methods
   * EAP over LAN (EAPoL)
     * layer 2 encapsulation protocol defined by 802.1x
-    * for transport EAP messages
+      * define how EAP messages are carried in LAN env.
   * RADIUS
     * provide AAA to EAP
 * roles

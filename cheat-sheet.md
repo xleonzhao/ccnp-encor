@@ -1,5 +1,6 @@
 - [protocol numbers](#protocol-numbers)
 - [addresses](#addresses)
+- [Misc.](#misc)
 
 # protocol numbers
 
@@ -25,3 +26,9 @@
 | Auto-RP/Cisco-RP-announce | 224.0.1.39 |
 | Auto-RP/Cisco-RP-Discovery | 224.0.1.40 |
 | VRRP | 224.0.0.18 
+
+# Misc.
+
+* numbered ACL: 1–99 and 1300–1999
+* numbered extended ACL: 100-199 and 2000-2699
+* 

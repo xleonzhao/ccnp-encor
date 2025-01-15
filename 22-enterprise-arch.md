@@ -6,7 +6,6 @@
 - [High Availability Network Design](#high-availability-network-design)
   - [Guidelines for network HA](#guidelines-for-network-ha)
   - [Guidelines for system HA](#guidelines-for-system-ha)
-  - [High Availability Technologies](#high-availability-technologies)
     - [SSO](#sso)
     - [NSF](#nsf)
     - [GR](#gr)
@@ -31,9 +30,9 @@
 * each modular layer to implement specific functions
 * modular layers can be easily replicated
 * benefits: (comparing to flat / full mesh)
-  * simplifies the network design and provides an 
-  * easy to scale
-  * consistent deployment method
+  * simplifies the network design
+    * easy to scale
+    * consistent deployment method
   * fault containment
   * facilitates troubleshooting, problem isolation, and network management
 * 3 layers
@@ -102,19 +101,16 @@
   * network capacity
   * faulty hardware
   * security threats
+* Enabling protocols that can detect link failures such as _BFD_ and _UDLD_
+* Enabling first-hop redundancy (FHRP) protocols such as _HSRP_, _VRRP_, and _GLBP_
 
 ## Guidelines for system HA
 
 * Using routers that support redundant hardware components such as redundant power supplies, redundant fans, redundant fan-trays, modular line cards, and dual route processor (RP) or supervisor engines
 * Using routers that support hot-swappable and/or_ online insertion and removal (OIR)_ capable hardware components
 * Enabling high availability technologies such as _Stateful Switchover (SSO)_ and _Nonstop Forwarding (NSF)_ with _Graceful Restart (GR)_ or _Nonstop Routing (NSR)_
-* Enabling protocols that can detect link failures such as _BFD_ and _UDLD_
-* Enabling first-hop redundancy (FHRP) protocols such as _HSRP_, _VRRP_, and _GLBP_
-
-## High Availability Technologies
-
-* when active RP (Route Processor) / Supervisor Engine fails
-* to allow the router to continue forwarding packets non- stop using the current Cisco Express Forwarding (CEF) entries in the FIB
+  * when active RP (Route Processor) / Supervisor Engine fails, to allow the router to continue forwarding packets non-stop using the current Cisco Express Forwarding (CEF) entries in the FIB
+  * while how to maintain neighboring session for routing protocols
 
 
 ### SSO
@@ -243,7 +239,7 @@
     * Virtual Switching System (VSS)
     * StackWise Virtual (SWV)
     * lean to distribution/core layer
-  * >= 2 switches
+  * more than 2 switches
     * StackWise
     * lean to access layer
 * EtherChannel / LACP supported

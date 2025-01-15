@@ -67,7 +67,7 @@
 
 ### NFV infrastructure (NFVI)
 
-* all the hardware and software components that comprise the platform environment in which virtual network functions (VNFs) are deploye
+* all the hardware and software components that comprise the platform environment in which virtual network functions (VNFs) are deployed
 
 ### Virtual Network Function (VNF)
 

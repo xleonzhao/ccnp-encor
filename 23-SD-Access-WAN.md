@@ -1,4 +1,5 @@
 - [Fabric network](#fabric-network)
+  - [Key differences between SD-Access and SD-WAN](#key-differences-between-sd-access-and-sd-wan)
 - [SD-Access](#sd-access)
   - [SD-Access Fabric Concepts](#sd-access-fabric-concepts)
     - [Virtual network (VN)](#virtual-network-vn)
@@ -57,6 +58,21 @@
     * recent changes
       * majority of enterprise traffic flows to public clouds and the Internet
     * SD-WAN fabric is a cloud-based WAN
+
+## Key differences between SD-Access and SD-WAN
+
+| Feature/Aspect  | **SD-Access**  | **SD-WAN**  |
+|-- |--|--|
+| **Purpose**                 | Manages the **local enterprise network (LAN)**, including campus networks. | Manages the **WAN infrastructure**, connecting branch offices, data centers, and cloud. |
+| **Scope**                   | Focuses on **intra-site connectivity** (within a building or campus). | Focuses on **inter-site connectivity** (between multiple branches, data centers, and cloud). |
+| **Primary Use Case**        | Simplifies and secures network management within a campus environment. | Optimizes WAN traffic across diverse connectivity options like MPLS, broadband, and LTE. |
+| **Underlying Architecture** | Builds on Cisco **DNA Center** for automation, segmentation, and assurance. | Builds on **vManage** as the central controller for policy and orchestration. |
+| **Technology**              | Implements a **fabric-based architecture** with features like VXLAN for virtualization. | Uses **overlay tunnels** (e.g., IPSec) and routing protocols to connect geographically distributed locations. |
+| **Key Focus**               | - User and device identity<br>- Network segmentation<br>- Policy enforcement within the LAN or campus. | - WAN link optimization<br>- Application performance<br>- Secure, dynamic routing across WAN links. |
+| **Security**                | Includes features like **macro and micro-segmentation** to isolate traffic within the campus. | Includes **end-to-end encryption**, secure internet breakout, and integration with security platforms like Cisco Umbrella. |
+| **Connectivity**            | Deals primarily with wired and wireless LANs. | Integrates multiple WAN types (MPLS, broadband, LTE, satellite, etc.). |
+| **Performance Optimization**| Improves performance through policy-driven automation and analytics (local focus). | Optimizes application traffic with features like **application-aware routing** and dynamic path selection. |
+| **Examples of Use Cases**    | - University campus networks<br>- Corporate headquarters<br>- Hospitals and large enterprise buildings. | - Connecting global branch offices<br>- Cloud-based application access<br>- Hybrid WAN connectivity. |
 
 # SD-Access
 
@@ -369,6 +385,7 @@
 # SD-WAN
 
 * problem to address
+  * WAN traffic optimization
   * extend to public cloud
   * transport-agnostic WAN
     * IP, MPLS, 4/5G, satellite, etc.

@@ -165,6 +165,9 @@ R1(config)# snmp-server host 192.168.14.100 traps READONLY
 
 * ensure NTP is enabled to make time sync'd
 * 7 levels of log levels, similar to Linux kernel
+
+![](img/2025-01-14-16-25-23.png)
+
 * 3 places to put log
   * console
   * logging buffer

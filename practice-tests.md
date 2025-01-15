@@ -6,6 +6,9 @@
 - [ch. 15-16 (24/36)](#ch-15-16-2436)
 - [ch. 17-19: 23/33](#ch-17-19-2333)
 - [ch. 20-21: 31/33](#ch-20-21-3133)
+- [ch. 22-24: 28/43](#ch-22-24-2843)
+- [ch. 25-26: 23/32](#ch-25-26-2332)
+- [ch. 27-29: 33/39](#ch-27-29-3339)
 
 # ch. 1-5: total 47, wrong: 2, arguable: 1
 
@@ -621,3 +624,215 @@ R1(config-router)# end
   * The client is currently in the bottom 78% of all wireless clients in data usage.
 
 > The connection score shown in the Client View window is determined by dividing the current data rate of the client by the lower maximum supported date rate. It is a measure of how much of its maximum capability it is using. If the client had a maximum rate of 100 Mbps, then a connection score of 78% would mean the client is currently using 78 Mbps.
+
+# ch. 22-24: 28/43
+
+* 3: What are three benefits of employing a hierarchical network design? (Choose three.)
+  * Use of a hierarchical design allows replacement of redundant devices with high-capacity network equipment.
+  * The hierarchical model allows the use of high-performance switches at all design layers, thus allowing for a fully-meshed topology.
+  * > Hierarchically designed networks can more easily be expanded to suit future needs.
+  * > Hierarchical design models enhance existing bandwidth through the use of link aggregation.
+  * A hierarchical design uses firewalls instead of complicated port-based and distribution layer security policies.
+  * > The hierarchical model allows for specialized functionality at each layer, simplifying device management.
+
+> Hierarchical design provides fault containment by constraining the network changes to a subset of the network, which affects fewer systems and makes it easy to manage as well as improve resiliency. In a modular layer design, network components can be placed or taken out of service with little or no impact to the rest of the network and this facilitates troubleshooting, problem isolation, and network management.
+
+* 11: A network engineer has to decide between a Layer 2 Access Layer (STP-based) and a Layer 3 Access Layer (Routed access) campus design option. Which statement must be considered for a decision to be made?
+  * The Routed access option is the best cost-effective solution.
+  * The STP based access option supports spanning VLANs across multiple access switches, whereas the Routed access option does not.
+    * LZ: this is also correct
+  * > The Routed access option offers easier troubleshooting than the STP-based option.
+  * The STP based option does not require FHRP, whereas the Routed access option does.
+
+> The Routed access design has a number of advantages over the STP-based design: No FHRP required – no need for FHRP protocols such as HSRP and VRRP. No STP required – since there are no L2 links to block, this design removes the need for STP. Easier troubleshooting – It offers common end-to-end troubleshooting tools (such as ping and traceroute). The Routed access is an excellent design for many environments, but it has the same limitation as the STP-based design, in which it does not support spanning VLANs across multiple access switches. Additionally, it might not be the most cost-effective solution because access layer switches with Layer 3 routing capability might cost more than Layer 2 switches do.
+
+* 15: An administrator issued the following commands on router R1:
+```
+R1(config)# logging 192.168.10.2
+R1(config)# logging trap 5
+```
+* What conclusion can be drawn from this configuration?
+  * The only messages that appear on the syslog server are those with severity level of 5​.
+  * > Messages with severity level of 6 or higher appear only on the router console output.
+    * LZ: this is wrong. Should be level 5 or lower
+  * Messages with severity level of 5 or higher appear on the router console output and are sent to the syslog server.
+  * The only messages that appear on the syslog server are those with severity level of 4 or lower​.
+
+
+* 16: What is the description for a Syslog Level 1 event?
+  * system unusable
+  * > immediate action needed
+  * error condition
+  * critical condition
+
+* 20: What is the description for a Syslog Level 5 event?
+  * > normal, but significant condition
+  * debugging message
+  * warning condition
+  * informational message
+
+* 21: What is the description for a Syslog Level 6 event?
+  * normal, but significant condition
+  * > informational message
+  * debugging message
+  * warning condition
+
+* 22: Which layer of the Cisco SD-Access Architecture contains the underlay and the overlay networks?
+  * controller
+  * > network
+  * management
+  * physical
+
+* 23: Which two statements describe the SD-Access overlay network? (Choose two.)
+  * It provides underlay and fabric automation and orchestration.
+  * > It is a virtualized network interconnecting all network devices.
+  * > It has three planes of operation: control, data, and policy.
+  * It is the underlying physical layer transporting data between network devices.
+  * It includes all devices that actively participate in the SD-Access fabric.
+
+* 26: Which IGP is used in the automated underlay model of the Cisco SD-Access architecture?
+  * OSPF
+  * BGP
+  * > IS-IS
+  * EIGRP
+
+* 30: What are three functions of the Cisco SD-WAN vBond orchestrator? (Choose three.)
+  * delivering quality of experience (QoE) for SaaS applications
+  * providing a single pane of glass network management system
+  * > providing a control plane connection over DTLS tunnels to communicate with SD-WAN routers
+    * LZ: this should be vSmart function
+  * forecasting and what-if analysis
+  * > providing NAT traversal between SD-WAN routers
+  * > providing load balancing of SD-WAN routers
+
+* 36: Which network monitoring tool can provide a complete audit trail of basic information of all IP flows on a Cisco router and forward the data to a device?
+  * > NetFlow
+  * SIEM
+  * SPAN
+  * Wireshark
+
+* 39: Refer to the exhibit. The RSPAN configuration for each switch is shown. The network administrator has configured RSPAN to allow the monitoring of traffic to a corporate server. Unfortunately, the administrator is unable to sniff any traffic from the link. Why is the administrator unable to sniff traffic?
+  * > VLAN 100 has not been properly configured as an RSPAN VLAN.
+    * need `remote-span` config bit underl vlan config
+  * Only VLAN 1 can be used as the RSPAN VLAN.
+  * The source and destination interfaces are reversed on SW2.
+    * LZ: this is also correct answer ?
+  * The session numbers on the two switches do not match.
+  * The remote interface on SW1 should be identified as fa0/3.
+
+# ch. 25-26: 23/32
+
+* https://itexamanswers.net/ccnp-encor-v8-chapters-25-26-access-control-and-infrastructure-security-test-online.html
+
+* 5: Which solution provides comprehensive network and data protection for organizations before, during, and after a malware attack?
+  * Cisco Umbrella
+  * Cisco ISE
+  * > Cisco AMP
+  * Cisco Stealthwatch
+
+* 7: What security capability is provided by applying Cisco WSA web reputation filters before an attack?
+  * > prevents client devices from accessing dangerous websites containing malware or phishing links
+  * uses URL filtering to shut down access to websites known to host malware
+  * provides administrators with granular control over web and mobile application usage behavior
+  * inspects the network continuously for instances of undetected malware and breaches
+
+* 18: hat are two limitations of PACLs? (Choose two.)
+  * only support numbered ACLs
+  * only support extended ACLs
+  * can only filter Layer 2 traffic
+  * > no support of ACLs that filter IPv6 packets
+  * > no filtering of outbound traffic
+
+* 19: An administrator defined a local user account with a secret password on router R1 for use with SSH. Which three additional steps are required to configure R1 to accept only encrypted SSH connections? (Choose three.)
+  * Configure DNS on the router.
+  * Enable inbound vty Telnet sessions.
+  * > Configure the IP domain name on the router.
+  * > Configure a host name other than “Router”.
+  * Generate two-way pre-shared keys.
+  * > Generate crypto keys.
+
+> There are three steps to configure SSH support on a Cisco router:
+> * Step 1: Configure a hostname.
+> * Step 2: Configure a domain name.
+> * Step 3: Generate crypto keys.
+
+* 20: Which command produces an encrypted password that is easily reversible?
+  * username {username} secret {password}
+  * username {username} algorithm-type sha256 {password}
+  * enable secret {password}
+  * > service password-encryption
+
+> The `service password-encryption` command uses a Cisco proprietary Vignere cypher algorithm which is weak and easily reversible. The `enable secret` and the `username secret` commands encrypt passwords using the MD5 hashing algorithm and the `username algorithm-type sha 256` command uses a SHA-256 hashed secret and is considered uncrackable.
+
+* 23: Which statement describes a difference between RADIUS and TACACS+?
+  * RADIUS separates authentication and authorization, whereas TACACS+ combines them as one process.
+  * RADIUS does not support EAP for 802.1x, whereas TACACS+ does.
+  * > RADIUS encrypts only the password, whereas TACACS+ encrypts all communication.
+  * RADIUS uses TCP, whereas TACACS+ uses UDP.
+
+* 27: What is the Control Plane Policing (CoPP) feature designed to accomplish?
+  * disable control plane services to reduce overall traffic
+  * manage services provided by the control plane
+  * direct all excess traffic away from the route processor
+  * > prevent unnecessary traffic from overwhelming the route processor
+    * LZ: unnecessary traffic?
+
+* 28: Which command can be issued to protect a Cisco router from unauthorized automatic remote configuration?
+  * no cdp enable
+  * no service pad
+  * > no service config
+  * no ip proxy-arp
+
+* 29: Which vulnerability can be mitigated by disabling CDP and LLDP on a Cisco device?
+  * > advertising detailed information about a device
+  * automatic remote configuration
+  * half-open or orphaned TCP connections
+  * answering APR requests intended for other devices
+
+# ch. 27-29: 33/39
+
+* https://itexamanswers.net/ccnp-encor-v8-chapters-27-29-virtualization-automation-and-programmability-test-online.html
+
+* 3: What are three responsibilities of the the NFV virtualized infrastructure manager? (Choose three.)
+  * performing all FCAPS functions for VNFs
+  * > managing and controlling NFVI hardware resources
+  * ? performing life cycle management of all NFVI resources
+  * creating, maintaining, and tearing down VNF network services
+    * this is done by NFV Orchestrator
+  * creating an end-to-end network
+  * > collecting performance measurements and fault information
+
+* 4: Which two components of the ETSI NFV architectural framework make up the NFV management and orchestration (MANO)? (Choose two.)
+  * Virtualized Infrastructure Manager
+  * NFV infrastructure
+  * NFV element manager
+  * OSS/BSS
+  * NFV orchestrator
+
+* 7: What function does Cisco DNA Center provide as part of a Cisco enterprise NFV solution?
+  * VNF life cycle management, monitoring, device programmability, and hardware acceleration
+  * communication between different VNFs and to the outside world
+  * CPU, memory, and storage resources to run NVFs and applications
+  * > VNF management and orchestration
+
+* 11: Which two HTTP functions correspond to the UPDATE function in CRUD? (Choose two.)
+  * > PUT
+  * DELETE
+  * > PATCH
+  * GET
+  * POST
+
+* 12： What are two syntax rules for writing a JSON array? (Choose two.)
+  * A semicolon separates the key and list of values.
+  * A space must separate each value in the array.
+  * The array can include only one value type.
+  * > Values are enclosed in square brackets.
+  * > Each value in the array is separated by a comma.
+
+* 22: In a hosted Chef type of deployment, where is the Chef server located?
+  * on a LAN located near to the other chef components
+  * > in the cloud
+  * on a workstation
+  * in the enterprise core
+    * LZ: this is private chef
+
