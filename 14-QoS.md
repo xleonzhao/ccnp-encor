@@ -61,8 +61,11 @@ $(1500 bytes × 8) / 1 Gbps = 12,000 / 1,000,000,000 = 0.12us$
 * best effort
 * Integrated Services (IntServ)
   * applications signal the network to make a bandwidth reservation
+  * end-to-end QoS
+  * requires RSVP
 * Differentiated Services (DiffServ)
   * network identifies classes that require special QoS treatment
+  * hop-by-hop behavior
 
 ## Integrated Services (IntServ)
 
@@ -193,6 +196,7 @@ class-map match-all HTTP-WEB-IMAGES
 
 * IPP: RFC791, original IP protocol
   * 3 bits
+  * Higher IPP values indicate higher priority for traffic
 * DiffServ: RFC2474, TOS redefined
   * 6 bits for class
   * 2 bits for ECN: Explicit Congestion Notification
@@ -214,7 +218,10 @@ class-map match-all HTTP-WEB-IMAGES
     * The CS bits make DSCP backward compatible with IP Precedence
   * Default Forwarding (DF) PHB: Used for best-effort service.
     * DSCP: 000000XX
-  * Assured Forwarding (AF) PHB: Used for guaranteed bandwidth service.
+  * Assured Forwarding (AF) PHB: Used for **guaranteed bandwidth** service.
+    * The AF PHB guarantees a certain amount of bandwidth to an AF class and allows access to extra bandwidth
+    * The AF class number does not represent precedence
+      * e.g.: AF4 does not get any preferential treatment
   * Expedited Forwarding (EF) PHB: Used for low-delay service.
 
 ###### Assured Forwarding (AF) PHB
@@ -265,6 +272,7 @@ class-map match-all HTTP-WEB-IMAGES
 * PC can mark their packets with DSCP, will switch trust it?
 * IP telephony endpoint may do it
   * a PC may be behind IP phone
+* A trust boundary is a point in the network where a device decides whether to accept or reject the QoS markings (such as CoS or DSCP values, but not the packet itself) on incoming packets
 
 ### example
 
@@ -280,6 +288,14 @@ policy-map INBOUND-MARKING-POLICY
     class class-default
         set dscp default
         set cos 0
+
+policy-map QoS-POLICY
+  class VOICE
+    bandwidth percent 30
+  class VIDEO
+    bandwidth percent 40
+  class DEFAULT
+    bandwidth percent 10
 ```
 
 ### Wireless QoS
@@ -467,12 +483,18 @@ Policy Map OUTBOUND-POLICY
     * but long delays and FIFO problems
   * priority queue (PQ)
     * 4 queues (high, medium, normal, low)
-    * may starve low priority queues
+    * strict priority queue
+      * lower priority queue only got serviced when higher queues are empty
+      * may starve low priority queues
   * weighted fair queue (WFQ)
     * automatically divide bw by number of flows
+    * non strict priority queue
+    * `fair`: provides fair bandwidth distribution among traffic flows while ensuring lower-latency service for high-priority traffic
     * flows are priorities by IPP
+      * higher precedence packets get higher weights and are dequeued faster.
 * current queuing
   * Class-based weighted fair queuing (CBWFQ)
+    * traffic are first classified, then within each class, do WFQ
     * up to 256 queues
     * each serve a traffic class
       * QoS marking
@@ -484,7 +506,8 @@ Policy Map OUTBOUND-POLICY
       * queue limit: max # of packets in q
     * good for non-real-time traffic
   * Low-latency queuing (LQQ)
-    * CBWFQ + PQ
+    * PQ + CBWFQ
+      * strict priority + non strict priority
     * unused bw from higher pri. q can be used by lower pri. q
     * PQ is policed to prevent starvation
 
@@ -500,11 +523,31 @@ Policy Map OUTBOUND-POLICY
     * not suitable for TCP: TCP global synchronization syndrome
       * multiple TCP sessions share same link
   * better action: random early drop (RED)
-* Weighted RED 
+    * RED continuously monitors the average queue depth of an interface or a buffer
+      * moving average to smooth spikes
+    * when queue depth 
+      * between min. threshold and max. threshold, do RED
+      * exceeds max. threshold, do tail drop
+* Weighted RED
+  * different threshold for different class
   * WRED honors IPP / DSCP
     * IPP 3 would be dropped more aggressively than IPP 5
     * DSCP, AFx3 would be dropped more aggressively than AFx2
   * can also set ECN bits
+
+```
+class-map match-any VOICE
+ match dscp ef
+class-map match-any DATA
+ match dscp af11 af12
+
+policy-map WRED-POLICY
+ class VOICE
+   random-detect dscp-based
+ class DATA
+   random-detect dscp af11 minimum-threshold 10 maximum-threshold 30
+   random-detect dscp af12 minimum-threshold 20 maximum-threshold 40
+```
 
 ### CBWFQ config
 

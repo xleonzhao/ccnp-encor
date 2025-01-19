@@ -48,8 +48,8 @@ R1# show ip eigrp topology
 
 ![](img/2024-10-16-10-33-22.png)
 
-* The 10.4.4.0/24 route is **passive** (P), which means the topology is **stable**. 
-  * During a topology change, routes go into an active (A) state when computing a new path.
+* The 10.4.4.0/24 route is **passive (P)**, which means the topology is **stable**. 
+* During a topology change, routes go into an **active (A)** state when **computing a new path**.
 
 # EIGRP Neighbors
 
@@ -71,10 +71,10 @@ R1# show ip eigrp topology
 * lowest metric wins
 
 $$
-Metric = 256 * [(K_1 * BW + \frac{K_2 * BW}{256 – Load} + K_3 * Delay) * \frac{K_5}{K_4 + Reliability}]
+Metric = 256 * [(K_1 * min. BW + \frac{K_2 * min. BW}{256 – Load} + K_3 * Delay) * \frac{K_5}{K_4 + Reliability}]
 $$
 
-* _BW_: $10^7$/(slowest link speed in the path)
+* _min. BW_: $10^7$/(**slowest link speed** in the path)
   * $10^7$ referrs to 10G, measured in Kbps
   * slowest link is the actual bw one can actually use
 * _Delay_ is the total measure of delay in the path, measured in tens of microseconds (µs)

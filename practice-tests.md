@@ -9,6 +9,7 @@
 - [ch. 22-24: 28/43](#ch-22-24-2843)
 - [ch. 25-26: 23/32](#ch-25-26-2332)
 - [ch. 27-29: 33/39](#ch-27-29-3339)
+- [final test: 122/151](#final-test-122151)
 
 # ch. 1-5: total 47, wrong: 2, arguable: 1
 
@@ -836,3 +837,210 @@ R1(config)# logging trap 5
   * in the enterprise core
     * LZ: this is private chef
 
+# final test: 122/151
+
+* https://itexamanswers.net/ccnp-encor-v8-final-test-online.html
+
+* 1: What is the IPv6 address used by OSPFv3 non-DR/BDR routers to send link-state updates and link-state acknowledgments?
+  * FF02::2
+  * FF02::5
+  * > FF02::6
+  * FF02::9
+
+* 2: Refer to the exhibit. Both routers R1 and R2 are configured for OSPFv3 and are routing for both IPv4 and IPv6 address families. Which two destination addresses will R1 use to establish a full adjacency with R2? (Choose two.)
+  * ff02::5
+    * LZ: should be this one
+  * > fe80::2
+  * > 2001:db8:22::100
+    * LZ: not global IPv6 addr., only link-local addr to ensure ospf traffic stay local
+  * 172.17.66.1
+  * 2001:db8:21:20::2
+
+![](img/2025-01-17-16-15-47.png)
+
+* 8: Which function is provided by the Cisco SD-Access Architecture controller layer?
+  * It presents all information to the user via a centralized management dashboard.
+  * It interconnects all of the network devices, thus forming a fabric of interconnected nodes.
+  * > It provides network automation and operational status information to the management layer.
+  * It delivers data packets to and from the network devices participating in SD-Access.
+
+* 22: Refer to the exhibit. All the displayed switches are Cisco 2960 switches with the same default priority and operating at the same bandwidth. Which three ports will be STP designated ports? (Choose three.)
+  * > fa0/10
+  * > fa0/21
+  * > fa0/13
+  * fa0/20
+  * fa0/9
+  * fa0/11
+
+* 36: A network engineer that works for a company that uses lightweight APs is examining various performance factors for the wireless network in a particular area of the company. The engineer notices that one AP has an index value of 40 for air quality. What significance, if any, does this value provide?
+  * The engineer should physically examine the surrounding area of the AP for potential RF obstructions.
+    * LZ: why this is wrong?
+  * The engineer might evaluate this index value over a period of 30 days to see if the air conditioning or heat is affecting the RF range of the AP.
+  * An air quality value of 40 is within acceptable performance range for a lightweight AP, so no action is required by the network engineer.
+  * > Because of poor air quality, the engineer should be concerned and evaluate other wireless channels for possible use.
+
+* 42: Which two methods are used by a single-root I/O virtualization (SR-IOV) enabled switch to switch traffic between VNFs? (Choose two.)
+  * through a DMVPN
+  * through a VXLAN
+  * > through an external switch
+  * > through the pNIC
+  * through a vSwitch
+
+* 45: What type of signal requires little extra bandwidth because data is being sent at a relatively low bit rate?
+  * orthogonal frequency division multiplexing
+  * direct sequence spread spectrum
+  * > narrowband
+  * parallel
+
+* 47: An administrator has configured an access list on R1 to allow SSH administrative access from host 172.16.1.100. Which command correctly applies the ACL?
+  * R1(config-if)# ip access-group 1 in
+  * R1(config-if)# ip access-group 1 out
+  * > R1(config-line)# access-class 1 in
+  * R1(config-line)# access-class 1 out
+
+* 49: What is true about TCAM lookups that are associated with CEF switching?
+  * > A single TCAM lookup provides Layer 2. Layer 3, and ACL information
+  * TCAM includes only Layer 3 lookup information.
+  * TCAM lookup tables are used only for the rapid processing of ACLs within CEF.
+  * TCAM lookup tables are used only for the Layer 3 forwarding operation.
+    * LZ: also can do layer 2 forwarding
+
+* 52: Refer to the exhibit. Switch SW-A is to be used as a temporary replacement for another switch in the VTP Student domain. What two pieces of information are indicated from the exhibited output? (Choose two.)
+  * > There is a risk that the switch may cause incorrect VLAN information to be sent through the domain.
+  * > This switch will update its VLAN configuration when VLAN changes are made on a VTP server in the same domain.
+  * VTP will block frame forwarding on at least one redundant trunk port that is configured on this switch.
+  * The other switches in the domain can be running either VTP version 1 or 2.
+  * VLAN configuration changes made on this switch will be sent to other devices in the VTP domain.
+
+![](img/2025-01-17-16-58-00.png)
+
+> If a switch on the same VTP domain is added to the network and the switch has a higher configuration revision number, valid VLANs can be deleted and VLANs from the new switch can be sent to other switches in the VTP domain. This can result in loss of connectivity for some network devices. Always put a false domain name on a new switch and then change the VTP domain name to the correct one so the configuration revision number will be at 0 on the switch to be added.
+
+* 53: Which two mode combinations would result in the successful negotiation of an EtherChannel? (Choose two.)
+ auto; auto
+* active; passive
+ active; on
+ passive; auto
+ desirable; active
+* desirable; desirable
+
+* 62: Which three functions are performed at the distribution layer of the hierarchical network model? (Choose three.)
+  * transports large amounts of data between different geographic sites
+  * forwards traffic to other hosts on the same logical network
+  * > forwards traffic that is destined for other networks
+  * > isolates network problems to prevent them from affecting the core layer
+  * allows end users to access the local network
+  * > provides a connection point for separate local networks
+
+* 70: What is the function of a QoS trust boundary?
+  * A trust boundary identifies the location where traffic cannot be remarked.
+  * A trust boundary only allows traffic to enter if it has previously been marked.
+  * > A trust boundary identifies which devices trust the marking on packets that enter a network.
+  * A trust boundary only allows traffic from trusted endpoints to enter the network.
+    * LZ: this is incorrect b/c it's not about blocking traffic, but QoS markings
+
+> A trust boundary is a point in the network where a device decides whether to accept or reject the QoS markings (such as CoS or DSCP values) on incoming packets
+
+* 86: A company has an extensive wireless network of multiple APs and a WLC. Users in one particular area complain of the lack of wireless connectivity. The network engineer verifies that the two APs in that area are communicating with the WLC. The network engineer checks the status of one particular client and the WLC interface shows a black client status dot for DHCP. The network engineer checks the status of another client and it too shows a black status dot of DHCP. What is the most likely problem?
+  * > The wireless devices do not have IP addressing information to participate on the wireless network.
+  * The WLC has not been configured for DHCP.
+  * The AP in the area has not received the proper IP addressing information.
+    * LZ: AP doesn't do layer 3 stuff
+  * The AP in the area has received an IP address, mask, and default gateway, but has not received the IP address of one or more WLCs with which to register.
+
+* 87: How do Layer 3 switches differ from traditional routers?
+  * Layer 3 switches never perform routing lookups. Routers must always perform routing lookups.
+  * > Layer 3 switches use ASICs for routing. Routers are software based.
+  * Layer 3 switches are used in LANs. Routers are used in WANs.
+  * Layer 3 switches forward packets based on MAC addresses only. Routers use IP addresses for forwarding.
+
+* 92: What are two main components of SD-Access? (Choose two.)
+  * > Cisco Campus Fabric solution
+  * Cisco Identity Services Engine
+  * > Cisco DNA Center
+  * Cisco Network Control Platform
+  * Cisco Network Data Platform
+
+* 98: A company has decided to implement VXLANs. What are two types of VTEP interfaces that will be deployed? (Choose two.)
+  * > local LAN interface
+  * VNI
+  * > IP interface
+  * tunnel interface
+  * PETR
+
+* 104: Which two statements are true about WRED? (Choose two.)
+  * > WRED will use the average queue depth of an interface when determining if a packet should be dropped.
+  * WRED does not support ECN.
+  * WRED uses a tail drop system for its queue buffers.
+  * > WRED uses the IP precedence or DSCP marking of a packet when determining if a packet should be dropped.
+  * WRED will drop packets marked AFx1 more aggressively than it will drop packets marked AFx3 from the queue.
+
+* 108: What function is performed by the OSPF designated router?
+  * summarizing routes between areas
+  * > dissemination of LSAs
+  * redistribution of external routes into OSPF
+  * maintaining the link-state database
+
+> OSPF designated routers are elected on multiaccess networks to disseminate LSAs to other OSPF routers. By having a single router disseminate LSAs, the exchanging of LSAs is more efficient.
+
+* 109: What technology will allow containers in different physical servers to communicate?
+  * an underlay network
+  * > an overlay network
+  * a vSwitch
+  * container bridging
+
+* 118: Which three options must match in order to establish an EtherChannel between two directly connected switches? (Choose three.)
+  * port numbers that are used for the EtherChannel
+  * > VLAN memberships of the interfaces that are used for EtherChannel
+  * domain names on the switches
+  * > speed of the interfaces that are used for EtherChannel
+  * > duplex settings of the interfaces that are used for EtherChannel
+  * port security settings on the interfaces that used for EtherChannel
+
+> Speed and duplex settings must match for all interfaces in an EtherChannel. All interfaces in the EtherChannel must be in the same VLAN if the ports are not configured as trunks. Any ports may be used to establish an EtherChannel. Domain names and port security settings are not relevant to EtherChannel.
+
+* 125: Refer to the exhibit. A network administrator is configuring an EtherChannel link between two switches, SW1 and SW2. Which statement describes the effect after the commands are issued on SW1 and SW2?
+  * The EtherChannel is established without negotiation
+  * > The EtherChannel fails to establish.
+  * The EtherChannel is established after SW2 initiates the link request.
+  * The EtherChannel is established after SW1 initiates the link request.
+
+![](img/2025-01-18-12-41-44.png)
+
+> The interfaces GigabitEthernet 0/1 and GigabitEthernet 0/2 are configured “on” for the EtherChannel link. This mode forces the interface to channel without PAgP or LACP. The EtherChannel will be established only if the other side is also set to “on”. However, the mode on SW2 side is set to PAgP desirable. Thus the EtherChannel link will not be established.
+
+* 127: Which component of the Cisco SD-Access Architecture provides policy-based network segmentation and mobility for wired and wireless hosts?
+  * network control platform
+  * > overlay network
+  * underlay network
+  * DNA Center
+
+> The SD-Access fabric is the overlay network, and it provides policy-based network segmentation, host mobility for wired and wireless hosts, and enhanced security beyond the normal switching and routing capabilities of a traditional network.
+
+* 128: Refer to the exhibit. Router R6 has sent a join message to router R4 requesting multicast traffic for users in the multicast group 224.1.1.1. How will the multicast traffic that is sent from the multicast server SRC through the R1-R3-R5 path be handled at router R6?
+  * The multicast traffic will be forwarded to all users in the multicast group 224.1.1.1.
+  * The multicast traffic will be sent to switch SW1, which will drop the traffic.
+  * > The multicast traffic will be dropped.
+    * RPF check
+    * PIM-SM uses the RPF lookup function to determine **where it needs to send joins** and prunes. 
+      * (S,G) joins (which are SPT states) are sent toward the source. 
+      * (*,G) joins (which are shared tree
+states) are sent toward the RP.
+  * The multicast traffic will be sent back to the rendezvous point (RP) through the R4-R2-R1 path.
+
+![](img/2025-01-19-12-22-44.png)
+
+* 135: What are three characteristics of a VLAN access port? (Choose three.)
+  * > A switch port can become an access port through static or dynamic configuration.
+    * via dynamic auto on both side maybe
+  * The VLAN that the access port is assigned to will be automatically deleted if it does not exist in the VLAN database of the switch.
+  * An access port should have the 802.1Q encapsulation associated with it.
+  * > An access port is created with the switchport mode access command and then associated with a VLAN with the switchport access vlan command.
+  * > An access port is associated with a single VLAN.
+  * An access port created with the switchport mode access command will send DTP frames by default.
+
+* 151: Which type of OSPF link-state advertisement is an ASBR summary LSA?
+  * type 6
+  * type 3
+  * > type 4
+  * type 5

@@ -10,6 +10,7 @@
     - [dBm](#dbm)
   - [Power Changes Along the Signal Path](#power-changes-along-the-signal-path)
     - [Free Space Path Loss](#free-space-path-loss)
+    - [Air Quality](#air-quality)
   - [Power Levels at Receiver](#power-levels-at-receiver)
 - [Carrying data over an RF signal](#carrying-data-over-an-rf-signal)
   - [Maintaining AP–Client Compatibility](#maintaining-apclient-compatibility)
@@ -221,6 +222,18 @@
   * The loss is a function of distance and frequency only
 > Even at 1 meter away, for 5G wifi, the effects of free space cause a loss of around 46 dBm!
 > For perspective, you might see a 69 dB Wi-Fi loss over a distance of about 13 to 28 meters.
+
+### Air Quality
+
+* indicates the overall condition of the wireless environment, such as level of interference in the RF spectrum within a specific channel.
+  * 100%: Excellent air quality, minimal interference.
+  * 0%: Poor air quality, significant interference.
+* combination of several factors
+  * RSSI
+  * SNR
+  * interferences
+  * channel utilization
+  * FSPL
 
 ## Power Levels at Receiver
 

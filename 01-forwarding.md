@@ -120,6 +120,7 @@ SW1(config-if)# switchport access vlan 99
 ---
 
 * `swtichport host` is a shortcut to put port in access and enable portfast
+* if an access port is assigned to a non-existent VLAN, the port will remain in an inactive state and will not forward traffic.
 
 ### Trunk Ports
 

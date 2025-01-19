@@ -353,7 +353,7 @@ line vty 4
   * `access-class {access-list-number|access-list-name} {in|out}`
   ```
   R2(config)# access-list 1 permit 10.12.1.0 0.0.0.255
-  R2 (config)# line vty 0 4
+  R2(config)# line vty 0 4
   R2(config-line)# access-class 1 in
   R2(config-line)# end
   ```
