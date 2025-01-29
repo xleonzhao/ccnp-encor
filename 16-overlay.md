@@ -196,6 +196,7 @@ R1# show interfaces tunnel 100 | include Tunnel.*is|Keepalive|Tunnel s|Tunnel p
 
 ## Internet Key Exchange / IKEv1
 
+* protocol that performs authentication between two endpoints to establish security associations (SAs), also known as IKE tunnels
 * RFC2409
 * UDP port: 500
 * Internet Security Association and Key Management Protocol (ISAKMP)
@@ -229,7 +230,7 @@ R1# show interfaces tunnel 100 | include Tunnel.*is|Keepalive|Tunnel s|Tunnel p
   * MM4: Responder → Sends its identity.
     * encryption key established
 * Authentication
-  * MM5: Initiator → Verifies the authentication (e.g., PSK or public-key).
+  * MM5: Initiator → Verifies the authentication (e.g., PSK or PKI).
   * MM6: Responder → Acknowledges authentication
 
 ### Phase 1 (Aggressive mode)
@@ -428,9 +429,11 @@ outbound esp sas:
 
 #### Site-to-Site VTI over IPsec
 
-* similar to those for GRE over IPsec configuration using
-IPsec profiles
-* use `tunnel mode ipsec {ipv4 | ipv6}` under the tunnel interface
+* VTI: virtual tunnel interface
+* no need for additional GRE header, using IPSec tunnel mode instead
+* config
+  * similar to those for GRE over IPsec configuration using IPsec profiles
+  * use `tunnel mode ipsec {ipv4 | ipv6}` under the tunnel interface
 
 ```
 R1#
@@ -545,6 +548,7 @@ outbound esp sas:
     * src UDP: randomized for better ECMP load sharing
     * dst UDP: 4341
   * LISP shim header
+    * 8B
     * for device-/path-level network virtualization
     * instance ID: like VRF/VPN ID for MPLS/L3VPN
       * 24b
@@ -628,7 +632,7 @@ host2.
 * MAC-in-IP/UDP tunneling
 * UDP port: 4789
   * Linux default: 8472
-
+* VxLAN Header: 8B
 ![](img/2024-11-07-16-10-00.png)
 
 * VNI/VNID (VXLAN network identifier): 24b

@@ -33,7 +33,7 @@
 * successor route: best path
 * FD: path cost
   * FD = RD from next hop + cost to the next hop
-* feasibility condition: RD < FD(best path) -> backup routes
+* __feasibility condition__: RD < FD(best path) -> backup routes
 
 ## Topology Table
 

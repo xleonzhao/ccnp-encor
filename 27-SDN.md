@@ -25,8 +25,10 @@
 
 * software-based layer-2 switch that operates like a physical Ethernet switch
   * enables VMs to communicate with each other
-  * enables VMs to communicate with external physical networks
+  * enables VMs to communicate with external physical networks via pNICs
 * traffic cannot flow from one vSwitch to another
+  * need go through some sort of VNF like NGFWv
+* vSwitches cannot share the same pNIC
 * popular ones
   * Open vSwitch (OVS)
   * VMware’s vSphere Standard Switch (VSS), the vSphere Distributed Switch (VDS),
@@ -35,7 +37,6 @@
   * Libvirt Virtual Network Switch
 
 ![](img/2024-11-12-10-11-36.png)
-![](img/2024-11-12-10-15-06.png)
 
 * distributed virtual switching
   * no need to configure each individual vSwitch
@@ -49,6 +50,7 @@
   * docker0: 172.17.0.0/16
   * if need talk to containers in a different node, need routing or overlay
     * or use an orchestrator like k8s
+![](img/2024-11-12-10-15-06.png)
 
 # Network Functions Virtualization (NFV)
 

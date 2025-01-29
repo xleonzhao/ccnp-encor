@@ -1,10 +1,13 @@
 - [PNetLab](#pnetlab)
   - [setup](#setup)
+  - [log file](#log-file)
   - [ishare2](#ishare2)
-  - [images](#images)
+    - [image file locations](#image-file-locations)
+    - [example](#example)
+  - [image resources](#image-resources)
   - [convert .ova to .qcow2](#convert-ova-to-qcow2)
-  - [kengs](#kengs)
-    - [rescue root password if forgot](#rescue-root-password-if-forgot)
+  - [踩过的坑](#踩过的坑)
+    - [forgot root password](#forgot-root-password)
     - [install pnetlab on bare mental, failed](#install-pnetlab-on-bare-mental-failed)
     - [~~store router/switch images on host~~](#store-routerswitch-images-on-host)
       - [fix permission issue when using `9p`](#fix-permission-issue-when-using-9p)
@@ -20,18 +23,22 @@
 
 ## setup
 
-* run [PNetLab](https://pnetlab.com/pages/download) as virtual machine
+* run [PNetLab](https://pnetlab.com/pages/download) as a virtual machine
 * login to vm
   * root/pnet
   * ssh root@192.168.122.68
 * login to pnet via https
   * admin/pnet
-* log file
-  * `/opt/unetlab/data/Logs/unl_wrapper.txt`
+
+## log file
+
+* pnet: `/opt/unetlab/data/Logs/unl_wrapper.txt`
+* individual instance: `/opt/unetlab/tmp/X/Y/wrapper.txt`
 
 ## ishare2
 
 * [ishare2](https://github.com/ishare2-org/ishare2-cli) to download images
+* the location of downloaded lab: `/opt/unetlab/labs/Your\ labs\ from\ PNETLab\ Store`
 
 ```
 # list local labs, downloaded from pnetlab
@@ -40,7 +47,44 @@ ishare2 labs
 ishare2 labs 1
 ```
 
-## images
+### image file locations
+
+* downloaded images are located at `/opt/unetlab/addons/` subdirs
+  * `.bin` at `iol/bin/`
+  * `.qcow2` at `qemu/`
+  * make sure downloaded images are **executable**
+
+```
+root@pnetlab:/opt/unetlab/addons# ls -l
+total 12
+drwxr-xr-x 2 root     root     4096 Apr  4  2020 dynamips
+drwxr-xr-x 4 www-data www-data 4096 Jan 13  2021 iol
+drwxr-xr-x 4 root     root     4096 Oct  3 17:33 qemu
+```
+
+* to run a router/switch instance, pnet is looking at `/opt/unetlab/tmp/X/Y`
+  * `X`: lab
+  * `Y`: router/switch instance
+* need make sure link downloaded image to where pnet is looking
+
+### example
+
+* for simulated cisco switches
+  * `i86bi-Linux-L2-Adventerprisek9-ms.SSA.high_iron_20190423.bin`
+* symolic link it to `/opt/unetlab/tmp/<lab #>/<instance #>/
+
+```
+root@pnetlab:/opt/unetlab/tmp/1/10# ls -l
+total 16
+lrwxrwxrwx 1 root unl   88 Oct  3 18:45 i86bi_Linux-L2-Adventerprisek9-ms.SSA.high_iron_20190423.bin -> /opt/unetlab/addons/iol/bin/i86bi_Linux-L2-Adventerprisek9-ms.SSA.high_iron_20190423.bin
+lrwxrwxrwx 1 root unl   80 Oct  3 18:47 i86bi_Linux-L3-AdvEnterpriseK9-M2_157_3_May_2018.bin -> /opt/unetlab/addons/iol/bin/i86bi_Linux-L3-AdvEnterpriseK9-M2_157_3_May_2018.bin
+lrwxrwxrwx 1 root unl   33 Oct  2 19:03 iourc -> /opt/unetlab/addons/iol/bin/iourc
+lrwxrwxrwx 1 root unl   40 Oct  2 19:03 keepalive.pl -> /opt/unetlab/addons/iol/bin/keepalive.pl
+-rwxrwxrwx 1 root unl 1190 Oct  2 19:03 startup-config
+-rwxrwxrwx 1 root unl  225 Oct  3 17:49 wrapper.txt
+```
+
+## image resources
 
 * https://labhub.eu.org
   * https://labhub.eu.org/UNETLAB%20II/addons/qemu/
@@ -52,9 +96,9 @@ ishare2 labs 1
 * there will be a .vmdk file, convert it to .qcow2
 * `qemu-img convert -f vmdk -O qcow2 image-disk1.vmdk image.qcow2`
 
-## kengs
+## 踩过的坑
 
-### rescue root password if forgot
+### forgot root password
 
 * use `virsh-rescue`
 

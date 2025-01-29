@@ -22,13 +22,14 @@
   - [Verification of IP Addresses](#verification-of-ip-addresses)
 - [Forwarding Architecture](#forwarding-architecture)
   - [Process switching](#process-switching)
-    - [Data structures](#data-structures)
   - [CEF](#cef)
-    - [TCAM](#tcam)
-    - [Distributed Forwarding](#distributed-forwarding)
     - [Software CEF](#software-cef)
     - [Hardware CEF](#hardware-cef)
-    - [SDM templates](#sdm-templates)
+      - [TCAM](#tcam)
+        - [example](#example)
+        - [SDM templates](#sdm-templates)
+  - [Centralized Forwarding](#centralized-forwarding)
+  - [Distributed Forwarding](#distributed-forwarding)
 
 # OSI model
 
@@ -298,31 +299,48 @@ SW1(config-if)# no shutdown
 
 ## Process switching
 
+* CPU makes switching decision for every packet
+  * routing lookup
+  * ARP resolution
 * software switching / slow path
   * `ip_input` process
     * packets coming to / going out from router itself
     * complicated packets, e.g., IP packets with Options
     * extra info needed, e.g., unresolved ARP entries
+* fallback of CEF
+* data structures used
+  * RIB
+    * to find next hop IP address and outgoing interface
+  * ARP table
+    * to find next hop MAC address
+
 ![](img/2024-09-18-11-24-30.png)
-
-### Data structures
-
-* RIB
-  * to find next hop IP address and outgoing interface
-* ARP table
-  * to find next hop MAC address
 
 ## CEF
 
 * Cisco Express Forwarding (CEF) / fast path
-* [software CEF](#software-cef)
-* [hardware CEF](#hardware-cef)
-  * ASIC
-  * TCAM (Tenary CAM)
-  * NPU
+* data structures
+  * precomputed FIB from RIB
+  * Adjacency table (next-hop IP address, next-hop MAC, egress interface MAC)
+* CEF switching
+![](img/2024-09-18-17-16-20.png)
 
-### TCAM
+### Software CEF
 
+* also known as the software FIB
+* Software CEF in hardware-based platforms is not used to do packet switching; instead, it is used to program the hardware CEF.
+
+### Hardware CEF
+
+* ASIC
+* TCAM (Tenary CAM)
+* NPU: Unlike ASICs, **NPUs are programmable**, and their firmware can be changed with relative ease.
+
+#### TCAM
+
+* matching and evaluation of a packet on more than one field
+  * Layer 2/3 source/destination addresses, protocol, QoS markings, ...
+* constant search time regardless of number of entries
 * CAM result is binary (0 or 1)
 * TCAM (0 true, 1 false, X don't care)
 
@@ -333,31 +351,42 @@ SW1(config-if)# no shutdown
   * The `mask` indicates the field that is of interest and that should be queried. 
   * The `result` indicates the action that should be taken with a match on the value and mask.
   * Multiple actions can be selected
+    * allow, drop, redirect to a QoS policer, ...
 
-### Distributed Forwarding
+##### example
 
-* If the line cards are equipped with forwarding engines so that they can make packet switching decisions without intervention of the RP, this is known as a *distributed forwarding architecture*.
-* On the contrary, centralized forwarding will involve *route processor (RP)* to process every packet
+* ACL
+```
+ip access-list extended HTTP_ACCESS
+ permit tcp 192.168.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 80
+ deny ip any any
+```
 
-### Software CEF
+* TCAM entries
+  * each rule -> one entry
+```
+| **Mask**                 | **Value**                      | **Action**   |
+|--------------------------|---------------------------------|--------------|
+| `0xFFFFFF00FFFFFF00FFFF` | `192.168.1.0 10.0.0.0 80`      | Permit       |
+| `0x00000000000000000000` | `0.0.0.0 0.0.0.0 ANY`          | Deny         |
+```
+* `0xFFFFFF00` means only compare first 24 bits
 
-* also known as the software Forwarding Information Base (FIB)
-* two tables
-  * FIB
-  * Adjacency table (next-hop IP address, next-hop MAC, egress if MAC)
-
-![](img/2024-09-18-17-16-20.png)
-
-* Software CEF in hardware-based platforms is not used to do packet switching as in software-based platforms; instead, it is used to program the hardware CEF.
-
-### Hardware CEF
-
-* NPU: Unlike ASICs, **NPUs are programmable**, and their firmware can be changed with relative ease.
-
-### SDM templates
+##### SDM templates
 
 > The allocation ratios between the various TCAM tables are stored and can be modified with Switching Database Manager (SDM) templates.
 * `[show] sdm prefer {vlan | advanced}`
   * then restart switch w/ `reload`
 * Every switch in a switch stack must be configured with the same SDM template.
 
+## Centralized Forwarding
+
+* route processor (RP) engine is equipped with a forwarding engine
+* RP makes forwarding decisions
+
+## Distributed Forwarding
+
+* line cards are equipped with forwarding engines
+* line cards make forwarding decisions
+
+![](img/2025-01-23-12-30-55.png)

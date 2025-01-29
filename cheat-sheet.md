@@ -39,7 +39,8 @@
   * numbered ACL: 1–99 and 1300–1999
   * numbered extended ACL: 100-199 and 2000-2699
 * HSRP: 
-  * CK: higher priority wins
+  * higher priority wins, then highest IP wins
+  * default: 100
 * Routing
   * lower AD wins
     * 0: directly connected routes
@@ -58,6 +59,13 @@
 * SD-Access Arch.
 
 ![](img/2024-11-18-15-27-27.png)
+* overlay network:
+  * control plane
+    * LISP
+  * data plane
+    * VxLAN
+  * policy plane
+    * TrustSec/SGT
 ![](img/2024-11-21-11-26-34.png)
 
 * SD-WAN Arch.
@@ -78,21 +86,12 @@
 
 * EtherChannel successful condition
   * on/on
-  * active/passive
-  * active/active
-  * desirable/auto
-  * desirable/desirable.
+  * at least one side is the initiator
+    * LACP `active`
+    * PAgP `desirable`
 
 * DTP port mode
-
-| **Switch A Mode**        | **Switch B Mode**      | **Resulting Port Mode** |
-|--------------------------|------------------------|--------------------------|
-| **Dynamic Auto**         | Dynamic Auto           | Access 
-| **Dynamic Auto**         | Dynamic Desirable      | Trunk  
-| **Dynamic Desirable**    | Dynamic Desirable      | Trunk  
-| **Dynamic Desirable**    | Dynamic Auto           | Trunk  
-| **Dynamic Desirable**    | Trunk                  | Trunk  
-| **Dynamic Auto**         | Trunk                  | Trunk  
+  * at least one side is the initiator (`desirable`) or static `trunk`
 
 * BGP AS Path flags
   * `i`: route configured with bgp `network` statement
@@ -102,3 +101,12 @@
 * EIGRP route state
   * passive (P): route stable
   * active (A): route is **computing a new path**
+
+* Wireless roaming
+  * intracontroller
+    * same WLC
+  * intercontroller
+    * layer 2
+      * WLCs in same VLAN
+    * layer 3
+      * WLCs in diff VLAN

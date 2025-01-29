@@ -21,7 +21,8 @@
 # VLAN trunking protocol (VTP)
 
 * cisco proprietary
-* config once, populate automatically
+* without VTP, adding a new VLAN need add it to all switches
+* with VTP, config once on one switch, populate automatically to all other switches
 * VTP Domain
   * VTP server
     * new/delete/edit VLANs
@@ -50,15 +51,12 @@
 ## VTP config
 
 ```
-SW1(config)# vtp version 3
-09:08:11.965: %SW_VLAN-6-OLD_CONFIG_FILE_READ: Old version 2 VLAN configuration file detected and read OK. Version 3 files will be written in the future.
 SW1(config)# vtp domain CISCO
-09:08:12.085: %SW_VLAN-6-VTP_DOMAIN_NAME_CHG: VTP domain name changed to CiscoPress. Changing VTP domain name from CCNP to CISCO
+SW1(config)# vtp version 3
 SW1(config)# vtp mode server
-Setting device to VTP Server mode for VLANS.
 SW1(config)# vtp password pnet
-Setting device VTP password to pnet
 SW1(config)# exit
+
 SW1# vtp primary
 This system is becoming primary server for feature vlan
 No conflicting VTP3 devices found.

@@ -36,6 +36,7 @@
     - [Maintaining WLC Availability](#maintaining-wlc-availability)
   - [Segmenting Wireless Configurations](#segmenting-wireless-configurations)
   - [Leveraging Antennas for Wireless Coverage](#leveraging-antennas-for-wireless-coverage)
+    - [Client density](#client-density)
     - [Radiation Patterns](#radiation-patterns)
     - [Gain](#gain)
       - [Beamwidth](#beamwidth)
@@ -46,7 +47,7 @@
       - [patch antenna](#patch-antenna)
       - [Yagi antenna](#yagi-antenna)
       - [Parabolic Dish Antenna](#parabolic-dish-antenna)
-- [Understanding Wireless Roaming and Location Services](#understanding-wireless-roaming-and-location-services)
+- [Understanding Wireless Roaming and Location Services :eyes:](#understanding-wireless-roaming-and-location-services-eyes)
   - [Roaming Between Autonomous APs](#roaming-between-autonomous-aps)
   - [Intracontroller Roaming](#intracontroller-roaming)
   - [Intercontroller Roaming](#intercontroller-roaming)
@@ -312,20 +313,20 @@
 
 ### Spatial Multiplexing
 
+* to increase data throughput
 * data distributed across two or more radio chains
-  * all operating on the same channel 
-  * but separated through spatial diversity
-  * to increase data throughput
-* to reduce interference
-  * try make signals arrived out of phase
-    * travel along slightly different paths
-      * space tx/rx antennas appropriately
-* spatial streams
-  * independent data streams multiplexed over the radio chains
-  * 3×3:2
-    * three transmitters
-    * three receivers
-    * support two unique spatial streams
+  * The data is split into $N$ independent streams (**spatial streams**)
+    * $N$ ≤ min(Transmit antennas, Receive antennas)
+  * Each spatial stream is transmitted simultaneously over the same frequency and time using a different antenna
+    * all operating on the **same channel** 
+  * different streams are propagated through a slightly different path b/c using different antennas
+    * spatial fingerprints
+    * pilot signals sent periodically by xmitter
+  * receiver receives all streams in same time but smart enough to separate each streams using some algorithms
+* notation: 3×3:2
+  * three transmitters
+  * three receivers
+  * support two unique spatial streams
 
 > Notice that a MIMO device can support a number of unique spatial streams that differs from the number of its transmitters or receivers. It might seem logical that each spatial stream is assigned to a transmitter/receiver, but that is not true. Spatial streams are processed so that they are distributed across multiple radio chains. The number of possible spatial streams depends on the processing capacity and the transmitter feature set of the device—not on the number of its radios.
 
@@ -613,8 +614,13 @@ router(config-int) # ip helper-address WLC2-MGMT-ADDR
 ## Leveraging Antennas for Wireless Coverage
 
 * When an alternating current is applied to an antenna, an electromagnetic wave is produced.
-* client density
-  * number of devices an AP can support
+
+### Client density
+  
+* good wireless design should
+  * ensure that the desired capacity is supported by each AP.
+  * provide enough APs to provide more capacity and also make sure the user population is distributed across the APs 
+  * limit the number of clients served by an AP by selecting an antenna that has a constrained coverage
 
 ### Radiation Patterns
 
@@ -706,7 +712,7 @@ As the process continues, the charge separation reverses and the field reaches i
 
 ![](img/2024-12-10-11-39-23.png)
 
-# Understanding Wireless Roaming and Location Services
+# Understanding Wireless Roaming and Location Services :eyes:
 
 * if client need re-associate? -> client IP need be changed?
 * if client need re-auth? -> time consuming
@@ -775,16 +781,15 @@ As the process continues, the charge separation reverses and the field reaches i
 * mobility group
   * group of controllers
     * up to 24 controllers
-* controllers within same group
-  * support
-    * L2/L3 roaming
-    * CCKM/Key caching/802.11r
-    * credentials are cached and shared
-* controllers not in same group
-  * credentials are not cached, nor shared
-  * client need re-auth during roaming
+  * controllers within same group
+    * support
+      * L2/L3 roaming
+      * CCKM/Key caching/802.11r
+      * credentials are cached and shared
+  * controllers not in same group
+    * credentials are not cached, nor shared
+    * client need re-auth during roaming
 * mobility domain
-  * including multiple mobility groups
   * each controller maintains a list of
     * its own MAC
     * other controllers' MAC (in or not in same group)

@@ -1,6 +1,4 @@
 - [Lab: vlan](#lab-vlan)
-  - [.bin files](#bin-files)
-  - [log file](#log-file)
 - [Config l2 switch](#config-l2-switch)
   - [Task 1: Create VLAN's](#task-1-create-vlans)
     - [config VTP](#config-vtp)
@@ -15,51 +13,17 @@
     - [on router](#on-router)
   - [misc.](#misc)
     - [config route port](#config-route-port)
+- [Netflow](#netflow)
+- [CoPP](#copp)
+- [VRF](#vrf)
+- [EtherChannel](#etherchannel)
+- [MST](#mst)
 
 # Lab: vlan
 
 * https://user.pnetlab.com/store/labs/detail?id=16405723981793
 
 ![](img/2024-10-09-15-21-04.png)
-
-* the location of downloaded lab: `/opt/unetlab/labs/Your\ labs\ from\ PNETLab\ Store`
-* download images
-
-```
-ishare2 labs          # Will show all labs available
-ishare2 labs <number> # Will download images for the lab with the specified number
-```
-
-* the location of downloaded images: `/opt/unetlab/addons/`
-
-```
-root@pnetlab:/opt/unetlab/addons# ls -l
-total 12
-drwxr-xr-x 2 root     root     4096 Apr  4  2020 dynamips
-drwxr-xr-x 4 www-data www-data 4096 Jan 13  2021 iol
-drwxr-xr-x 4 root     root     4096 Oct  3 17:33 qemu
-```
-
-## .bin files
-
-* for simulated cisco switches
-* `i86bi-Linux-L2-Adventerprisek9-ms.SSA.high_iron_20190423.bin`
-* symolic link it to `/opt/unetlab/tmp/<lab #>/<instance #>/
-
-```
-root@pnetlab:/opt/unetlab/tmp/1/10# ls -l
-total 16
-lrwxrwxrwx 1 root unl   88 Oct  3 18:45 i86bi_Linux-L2-Adventerprisek9-ms.SSA.high_iron_20190423.bin -> /opt/unetlab/addons/iol/bin/i86bi_Linux-L2-Adventerprisek9-ms.SSA.high_iron_20190423.bin
-lrwxrwxrwx 1 root unl   80 Oct  3 18:47 i86bi_Linux-L3-AdvEnterpriseK9-M2_157_3_May_2018.bin -> /opt/unetlab/addons/iol/bin/i86bi_Linux-L3-AdvEnterpriseK9-M2_157_3_May_2018.bin
-lrwxrwxrwx 1 root unl   33 Oct  2 19:03 iourc -> /opt/unetlab/addons/iol/bin/iourc
-lrwxrwxrwx 1 root unl   40 Oct  2 19:03 keepalive.pl -> /opt/unetlab/addons/iol/bin/keepalive.pl
--rwxrwxrwx 1 root unl 1190 Oct  2 19:03 startup-config
--rwxrwxrwx 1 root unl  225 Oct  3 17:49 wrapper.txt
-```
-
-## log file
-
-* `/opt/unetlab/data/Logs/unl_wrapper.txt`
 
 # Config l2 switch
 
@@ -84,6 +48,7 @@ lrwxrwxrwx 1 root unl   40 Oct  2 19:03 keepalive.pl -> /opt/unetlab/addons/iol/
 ! on primary server
 vtp domain mydomain
 vtp version 3
+vtp mode server
 vtp password pnet
 exit
 vtp primary
@@ -196,9 +161,9 @@ ip dhcp pool VLAN60
 
 ### on router
 
-* first configure inside/outside nat interfaces
-
 ```
+! first configure inside/outside nat interfaces
+!
 interface ethernet 0/1
  ip nat outside
  ip address dhcp
@@ -209,21 +174,16 @@ interface ethernet 0/0.10
 
 inteface ethernet 0/0.60
  ip nat inside
-```
-* second, create an ACL to match traffic
 
-```
+! second, create an ACL to match traffic
+!
 access-list 1 permit 192.168.10.0 0.0.0.255
 access-list 1 permit 192.168.60.0 0.0.0.255
-```
 
-* third, create a nat rule
-
-```
+! third, create a nat rule
+!
 ip nat inside source list 1 interface ethernet 0/1 overload
 ```
-
-* now endpoints should have internet access
 
 ## misc.
 
@@ -233,3 +193,85 @@ ip nat inside source list 1 interface ethernet 0/1 overload
 no switchport
 ip address 192.168.100.1 255.255.255.0
 ```
+
+# Netflow
+
+```
+flow record myRec
+ match ipv4 protocol
+ match ipv4 source address
+ match ipv4 destination address
+ match transport source-port
+ match transport destination-port
+ collect counter bytes
+ collect counter packets
+!
+flow exporter myExp
+ destination 10.1.1.99
+ transport udp 2055
+!
+flow monitor netflow-mon
+ exporter myExp
+ record myRec
+!
+interface Ethernet0/1
+ ip address 10.1.1.1 255.255.255.0
+ ip flow monitor netflow-mon input
+```
+
+# CoPP
+
+```
+ip access-list extended ICMP-TRAFFIC
+ permit icmp any any
+!
+class-map match-all CLASS-ICMP-TO-RP
+ match access-group name ICMP-TRAFFIC
+!
+policy-map Policy-CoPP-ICMP
+ class CLASS-ICMP-TO-RP
+  police 12000 conform-action transmit  exceed-action drop  violate-action drop 
+!
+control-plane
+ service-policy input Policy-CoPP-ICMP
+```
+
+# VRF
+
+```
+R1(config)# vrf definition MGMT
+R1(config-vrf)# address-family ipv4
+R1(config)# interface GigabitEthernet0/3
+R1(config-if)# vrf forwarding MGMT
+R1(config-if)# ip address 10.0.3.1 255.255.255.0
+R1(config)# ip route vrf MGMT 0.0.0.0 0.0.0.0 10.10.1.1
+```
+
+# EtherChannel
+
+```
+DLS1(config)#int range e0/2, e2/2
+DLS1(config-if-range)#switchport trunk encapsulation dot1q
+DLS1(config-if-range)#switchport mode trunk
+DLS1(config-if-range)#channel-group 1 mode on
+Creating a port-channel interface Port-channel 1
+
+DLS1(config-if-range)#exit
+DLS1(config)#int range e0/0, e2/0
+DLS1(config-if-range)#switchport trunk encapsulation dot1q
+DLS1(config-if-range)#switchport mode trunk
+DLS1(config-if-range)#channel-group 2 mode active
+Creating a port-channel interface Port-channel 2
+
+DLS1(config)#int range e0/1, e2/1
+DLS1(config-if-range)#switchport trunk encapsulation dot1q
+DLS1(config-if-range)#switchport mode trunk
+DLS1(config-if-range)#channel-group 3 mode desirable
+Creating a port-channel interface Port-channel 3
+
+ALS2#show etherchannel summary
+ALS1#show interfaces trunk
+```
+
+# MST
+

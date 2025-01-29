@@ -1,6 +1,7 @@
 - [Fabric network](#fabric-network)
   - [Key differences between SD-Access and SD-WAN](#key-differences-between-sd-access-and-sd-wan)
 - [SD-Access](#sd-access)
+  - [Main components](#main-components)
   - [SD-Access Fabric Concepts](#sd-access-fabric-concepts)
     - [Virtual network (VN)](#virtual-network-vn)
     - [Host pool](#host-pool)
@@ -12,6 +13,7 @@
     - [Overlay Network](#overlay-network)
       - [SD-Access Control Plane](#sd-access-control-plane)
       - [SD-Access Fabric Data Plane](#sd-access-fabric-data-plane)
+      - [Interaction between control plane and data plane](#interaction-between-control-plane-and-data-plane)
       - [SD-Access Fabric Policy Plane](#sd-access-fabric-policy-plane)
       - [SD-Access Fabric Roles and Components](#sd-access-fabric-roles-and-components)
         - [Fabric Edge Nodes](#fabric-edge-nodes)
@@ -34,6 +36,11 @@
     - [vAnalytics](#vanalytics)
   - [SD-WAN Policy](#sd-wan-policy)
     - [Application-Aware Routing (AAR)](#application-aware-routing-aar)
+  - [Example of how they work together](#example-of-how-they-work-together)
+    - [Policy creation](#policy-creation)
+    - [vEdge Registration](#vedge-registration)
+    - [Route Exchange](#route-exchange)
+    - [Traffic Forwarding](#traffic-forwarding)
   - [Cisco SD-WAN Cloud OnRamp (CoR)](#cisco-sd-wan-cloud-onramp-cor)
     - [Cloud OnRamp for SaaS](#cloud-onramp-for-saas)
       - [multi-homed with different ISPs/DIA](#multi-homed-with-different-ispsdia)
@@ -103,11 +110,16 @@
   * network virtualization
     * VRF / VN
     * each with a distinct set of access policies
-* two main components
-  * Cisco Campus fabric solution
-    * managed via CLI/API using NETCONF/YANG
-  * Cisco DNA Center
-* arch.
+
+## Main components
+
+* Cisco Campus fabric solution
+  * managed via CLI/API using NETCONF/YANG
+* Cisco DNA Center
+
+![](img/2025-01-24-09-15-05.png)
+
+* Arch.
 
 ![](img/2024-11-18-15-27-27.png)
 
@@ -160,6 +172,7 @@
   * Cisco wireless: Cisco WLCs and APs
   * Cisco controller appliances: Cisco DNA Center and Cisco ISE are required
 * must support all of the hardware ASICs and FPGAs and software requirements
+* _SD-Access extension nodes_: Cisco access layer switches that do not actively participate in the SD-Access fabric but that are part of it because of automation 
 
 ## Network Layer
 
@@ -217,7 +230,7 @@
   * not use LISP data plane
     * IP-in-IP
 * enhanced to support Cisco TrustSec Scalable Group Tags (SGTs)
-  * adding new fields to the first 4 bytes of the VXLAN header
+  * adding new fields to the first 4 bytes of the VXLAN header (total 8B)
     * VXLAN Group Policy Option (VXLAN-GPO)
 
 ![](img/2024-11-21-11-06-47.png)
@@ -232,6 +245,29 @@
   * only meaningful when the G bit field is set to 1
   * =1: indicates that the group policy has already been applied to this packet, and further policies must not be applied by network devices
   * =0: group policies must be applied by network devices, and they must set the A bit to 1 after the policy has been applied.
+
+#### Interaction between control plane and data plane
+
+* When a packet arrives at an edge node in the SD-Access fabric, the LISP control plane determines the RLOC of the destination.
+* The edge node encapsulates the original Ethernet frame into a VXLAN packet.
+* The outer header contains the RLOCs and VXLAN information, including the VNI and SGT.
+* The packet is then forwarded through the underlay network.
+* At the destination edge, the outer header is stripped off, and the original packet is delivered to the destination endpoint
+* Example:
+  * EID registration
+    * when an endpoint (e.g., a laptop or IoT device) connects to the SD-Access fabric, the Fabric Edge Node (FE) learns its Endpoint Identifier (EID) (typically the device's IP or MAC address).
+    * The Fabric Edge Node sends this information to the Fabric Control Plane Node (CP), which is part of the LISP infrastructure.
+    * The LISP Map Server/Resolver (MS/MR) stores the mapping of the EID to the Routing Locator (RLOC) (the Fabric Edge Node IP addr.).
+  * Suppose Host A (10.1.1.10) wants to communicate with Host B (10.1.1.20):
+    * Host A sends a packet to its default gateway (Fabric Edge Node 1).
+    * Fabric Edge Node 1 queries the Fabric Control Plane Node for Host B's RLOC.
+    * Fabric Control Plane Node returns the RLOC of Fabric Edge Node 2, where Host B is located.
+    * Fabric Edge Node 1 encapsulates the packet using VXLAN, setting:
+      * VNI for the virtual network/VLAN
+      * SGT for security policy enforcement
+      * Outer IP header with RLOCs of Fabric Edge Node 1 (source) and Node 2 (destination).
+    * The VXLAN packet is transported across the fabric.
+    * At Fabric Edge Node 2, VXLAN decapsulation occurs, and the packet is forwarded to Host B.
 
 #### SD-Access Fabric Policy Plane
 
@@ -296,6 +332,7 @@
 
 * are LISP proxy tunnel routers (PxTR)
 * connect external Layer 3 networks to the SD-Access fabric
+  * including traditional campus network which transitioning to SD-Access
 * translate reachability and policy information, such as VRF and SGT information, from one domain to another.
 * 3 types of border nodes:
   * Internal border (rest of company): Connects only to the known areas of the organization (for example, WLC, firewall, data center).
@@ -307,11 +344,12 @@
 ##### Fabric Wireless Controller (WLC)
 
 * connects APs and wireless endpoints to the SD-Access fabric
-* performs PxTR registrations to the fabric control plane (on behalf of the fabric edges)
-  * a fabric edge for wireless clients
-  * EID -> AP -> Fabric edge node
+* performs PxTR registrations to the fabric control plane on behalf of the fabric edges
+  * as if a fabric edge for wireless clients
+  * EID -> fabric AP -> fabric edge node
 * traditionally, data plane (wireless client data) traffic needs to be tunneled to the WLC through the Control and Provisioning of Wireless Access Points (CAPWAP) tunnel
 * SD-Access data plane is distributed using VXLAN directly from the fabric-enabled APs
+  * no U-turn via WLC anymore
 
 ![](img/2024-11-21-11-54-27.png)
 
@@ -410,26 +448,44 @@
 ## Cisco SD-WAN
 
 * cloud-delivered overlay
+* benefits
+  * Centralize device configuration and network management.
+  * Lower costs and reduce risks with simple WAN automation and orchestration.
+  * Extend their enterprise networks (such as branch or on-premises) seamlessly into the public cloud. 
+  * Provide optimal user experience for SaaS applications.
+  * Enhance application visibility and use that visibility to improve performance with intelligent path control to meet SLAs for business-critical and real-time applications.
+    * Application-Aware routing (AAR)
+    * QoE
+  * Leverage a transport-independent WAN for lower cost and higher diversity.
+    *  Internet, MPLS, 3G/4G LTE, satellite, or dedicated circuits.
+  * Provide end-to-end WAN traffic segmentation and encryption for protecting critical enterprise compute resources
+* limitation
+  * complexity
+  * interoperability
 
 ![](img/2024-11-22-14-54-07.png)
 
 * components
   * SD-WAN edge devices
     * physical or virtual devices forward traffic across transports (that is, WAN circuits/media) between locations.
-  * vManage Network Management System (NMS)
-    * SD-WAN controller provides GUI for managing and monitoring the SD-WAN solution.
-  * vSmart controller
+  * vSmart controller (now Cisco Catalyst SD-WAN Controller)
     * SD-WAN controller advertises routes and data policies to edge devices.
-  * vBond orchestrator
+  * vBond orchestrator (now Cisco Catalyst SD-WAN Validator/Orchestrator)
     * SD-WAN controller authenticates and orchestrates connectivity between edge devices, vManage, and vSmart controllers.
-  * vAnalytics
+  * vManage Network Management System (now Cisco Catalyst SD-WAN Manager) 
+    * SD-WAN controller provides GUI for managing and monitoring the SD-WAN solution.
+  * vAnalytics (now Cisco Catalyst SD-WAN Analytics)
     * optional analytics and assurance service.
 * controllers can be device or VM
+
+> These changes are effective from Cisco IOS XE SD-WAN Release 17.12.1a and Cisco Catalyst SD-WAN Release 20.12.1
+> The prefix "v" referred to the original Viptela product line
 
 ### vBond Orchestrator
 
 * a virtualized vEdge device
 * known by dns name
+  * requires a public IP address so SD-WAN devices can connect to it
 * components
   * Authentication
     * authenticating every devices using certificates and RSA cryptography.
@@ -462,6 +518,8 @@
 * contains all of the edge device configurations
 * controls software updates
 * policy creation
+  * e.g.: critical app traffic must use MPLS link, others use IP link
+  * failover to LTE link
 * also provides a method of configuring the SD-WAN fabric via APIs
 
 ### Cisco SD-WAN Edge Devices
@@ -476,7 +534,6 @@
 
 * Visibility into applications and infrastructure across the WAN
 * Forecasting and what-if analysis
-
 
 ## SD-WAN Policy
 
@@ -507,6 +564,35 @@
 * use the Bidirectional Forwarding Detection (BFD) probes in the SD-WAN tunnels to track a tunnel’s packet loss, latency, and jitter
 * AAR provides the ability to consider factors in path selection outside of those used by standard routing protocols
 * switch transport if needed
+
+## Example of how they work together
+
+### Policy creation
+
+* _vManage_ platform defines policies, such as:
+  * Business-critical applications (e.g., Office 365, Salesforce) must always use the MPLS link for reliability.
+  * Non-critical traffic (e.g., social media, software updates) should use broadband to reduce costs.
+  * Failover policy: If MPLS fails, business-critical traffic should switch to LTE.
+
+### vEdge Registration
+
+* It authenticates itself with the _vBond_ Orchestrator using certificates and cryptographic keys.
+* Once authenticated, the _vBond_ helps the _vEdge_ establish a secure DTLS/TLS connection with the _vSmart_ Controller.
+
+### Route Exchange
+
+* Branch A’s _vEdge_ advertises 192.168.1.0/24 (its local subnet) to the _vSmart_ Controller.
+* Data Center’s _vEdge_ advertises 10.1.1.0/24 to the _vSmart_ Controller.
+* The _vSmart_ Controller distributes these routes to both Branch A and the Data Center _vEdge_
+* The routes also include:
+  * The Transport Locator (TLOC) of the destination vEdge (i.e., the public IP or private IP of the vEdge router’s WAN interface).
+  * The transport path(s) available (e.g., MPLS, broadband, LTE) with associated performance metrics.
+  * Any policies that should be applied for that traffic (e.g., QoS or segmentation).
+
+### Traffic Forwarding
+
+* When a user at Branch A accesses an application hosted at the Data Center, the Branch A _vEdge_ establishes an IPsec tunnel with the Data Center _vEdge_.
+* Traffic is routed based on policies (e.g., MPLS for critical traffic, broadband for non-critical traffic).
 
 ## Cisco SD-WAN Cloud OnRamp (CoR)
 

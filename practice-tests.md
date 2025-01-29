@@ -10,6 +10,7 @@
 - [ch. 25-26: 23/32](#ch-25-26-2332)
 - [ch. 27-29: 33/39](#ch-27-29-3339)
 - [final test: 122/151](#final-test-122151)
+- [more tests](#more-tests)
 
 # ch. 1-5: total 47, wrong: 2, arguable: 1
 
@@ -1044,3 +1045,9 @@ states) are sent toward the RP.
   * type 3
   * > type 4
   * type 5
+
+---
+
+# more tests
+
+* https://itexamanswers.net/ccnp-encor-v8-certification-practice-test-online.html

@@ -355,13 +355,14 @@ policy-map QoS-POLICY
 
 ![](img/2024-10-29-10-32-22.png)
 
-* Time interval at line rate = (Bc [bits] / Interface speed [bps]) × 1000
-  * Bc = 12Mb
+* Math:
   * IF speed = 1Gbps
+  * Bc = 12Mb
   * CIR = 120Mbps
   * packet size = 1500B = 12Kb
-* within a _Bc_/_Tc_, only 1000 packets can be sent til all tokens burned 
-  * assuming a continuous stream of 1500B/packet
+  * $T_c = B_c/CIR = 100ms$
+  * within a $T_c$, only $B_c/PakcetSize=1000$ packets can be sent til all tokens burned (which took only $B_c/IFSpeed=12ms$)
+    * assuming a continuous stream of 1500B/packet
 
 ### Policer Config
 

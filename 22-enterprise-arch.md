@@ -40,6 +40,8 @@
   * Distribution layer
   * Core layer / Backbone
 
+![](img/2025-01-23-10-07-33.png)
+
 ## Access layer
 
 * connects different types of endpoints
@@ -58,12 +60,21 @@
   * layer 3 side: summarize IP routing info. before entering core
 * deployed in pairs for redundancy
   * also interconnected to each other of the pair
+* multiple distribution switches
+  * multiple buildings
+  * reduce the number of fiber-optic runs (which are costly) between buildings
+  ![](img/2025-01-23-10-06-43.png)
 
 ## Core layer
 
-![](img/2024-11-15-11-16-58.png)
+* the backbone
+* aggregation point for multiple networks and provides scalability, high availability, and fast convergence to the network
+
+![](img/2025-01-23-10-05-52.png)
 
 ## Network Blocks
+
+![](img/2024-11-15-11-16-58.png)
 
 * building blocks or places in the network (PINs)
 * data center
