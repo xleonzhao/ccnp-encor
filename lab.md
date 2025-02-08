@@ -12,12 +12,24 @@
   - [Task 6: Internet Access (optional)](#task-6-internet-access-optional)
     - [on router](#on-router)
   - [misc.](#misc)
-    - [config route port](#config-route-port)
+    - [config routed port](#config-routed-port)
 - [Netflow](#netflow)
 - [CoPP](#copp)
 - [VRF](#vrf)
+- [HSRP/VRRP](#hsrpvrrp)
+- [VRRP](#vrrp)
 - [EtherChannel](#etherchannel)
 - [MST](#mst)
+- [BGP](#bgp)
+- [IP SLA and EEM](#ip-sla-and-eem)
+- [NETCONF](#netconf)
+  - [get it running](#get-it-running)
+  - [use netconf](#use-netconf)
+- [line](#line)
+- [GRE](#gre)
+- [IPSec](#ipsec)
+  - [GRE/transport mode](#gretransport-mode)
+  - [VTI/tunnel mode](#vtitunnel-mode)
 
 # Lab: vlan
 
@@ -187,7 +199,7 @@ ip nat inside source list 1 interface ethernet 0/1 overload
 
 ## misc.
 
-### config route port
+### config routed port
 
 ```
 no switchport
@@ -247,6 +259,23 @@ R1(config-if)# ip address 10.0.3.1 255.255.255.0
 R1(config)# ip route vrf MGMT 0.0.0.0 0.0.0.0 10.10.1.1
 ```
 
+# HSRP/VRRP
+
+```
+SW2(config)# interface vlan 10
+SW2(config-if)# ip address 172.16.10.2 255.255.255.0
+SW2(config-if)# standby 10 ip 172.16.10.1
+SW2(config-if)# standby 10 preempt
+```
+
+# VRRP
+
+```
+R2(config)# interface GigabitEthernet 0/0
+R2(config-if)# ip address 172.16.20.2 255.255.255.0
+R2(config-if)# vrrp 20 ip 172.16.20.1
+```
+
 # EtherChannel
 
 ```
@@ -275,3 +304,181 @@ ALS1#show interfaces trunk
 
 # MST
 
+```
+! make self be the root for mst 1
+DLS1(config)#spanning-tree mst 1 root primary
+DLS2(config)#spanning-tree mst configuration
+DLS2(config-mst)#name CCNP
+DLS2(config-mst)#revision 0
+! distribute spanning-tree to VLANs
+DLS2(config-mst)#instance 1 vlan 100, 200
+DLS2(config-mst)#instance 2 vlan 300, 400
+DLS2(config-mst)#instance 3 vlan 500, 600
+DLS2(config-mst)#instance 4 vlan 700, 800
+DLS1(config)#spanning-tree mode mst
+! check
+DLS1#show spanning-tree mst 1
+```
+
+# BGP
+
+```
+router bgp <ASN>
+  neighbor <ip> remote-as <ASN>
+  neighbor <ip> update-source Loopback0 
+  address-family ipv4
+    network <ip> mask <mask>
+```
+
+# IP SLA and EEM
+
+```
+! SLA
+R2(config)#ip sla 1
+R2(config-ip-sla)#icmp-echo 10.1.23.3 source-ip 10.1.23.2
+R2(config-ip-sla-echo)#frequency 10
+R2(config-ip-sla-echo)#exit
+R2(config)#ip sla schedule 1 life forever start-time now
+!
+! tracking
+track 1 ip sla 1 reachability
+!
+! EEM
+!   when link A down, use link B
+R2(config)#event manager applet TRACK_DOWN
+R2(config-applet)#event track 1 state down
+R2(config-applet)#action 1.0 cli command "enable"
+R2(config-applet)#action 2.0 cli command "conf t"
+R2(config-applet)#action 3.0 cli command "ip route 8.8.8.8 255.255.255.255 10.1.24.4"
+R2(config-applet)#action 4.0 cli command "no ip route 8.8.8.8 255.255.255.255 10.1.23.3"
+!
+! optional: debug EEM
+R2#debug event manager action cli
+```
+
+# NETCONF
+
+* https://user.pnetlab.com/store/labs/detail?id=16000809382486
+* https://community.cisco.com/t5/networking-blogs/getting-started-with-netconf-yang-part-1/ba-p/3661241
+
+## get it running
+
+* csr1000v image not found
+  * use [this one](https://dl.nextadmin.net/dl/EVE-NG-image/qemu/csr1000vng-universalk9.16.09.01.Fuji.tar.gz)
+* netconf keysign error: `NETCONF/SSH: error: ssh_r sa_sign: RSA_sign failed`
+  * fix:
+  ```
+  conf t
+  no netconf-yang
+  crypto key generate rsa modulus 2048
+  netconf-yang
+  ```
+* connect Ubuntu-Server via an external terminal
+  * find ubuntu-server interface ip address: `ip a`
+  * login to Pnetlab VM
+  * then ssh to ubuntu-server
+  * copy and paste works better this way
+* check session: `show netconf-yang sessions`
+
+## use netconf
+
+* send HELLO 
+  * netconf will not respond to hello
+```
+<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+<capabilities>
+ <capability>urn:ietf:params:netconf:base:1.0</capability>
+</capabilities>
+</hello>
+]]>]]>
+```
+* send RPC
+```
+<rpc message-id="103" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+<get>
+ <filter>
+ <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"/>
+ </filter>
+</get>
+</rpc>
+]]>]]>
+```
+
+# line
+
+```
+username cisco secret cisco
+hostname R1
+ip domain-name cisco.com
+crypto key generate rsa
+access-list 10 permit 192.168.100.1 255.255.255.0
+!
+line con
+  exec-timeout 5 0
+  login local
+line vty 0 9
+  exec-timeout 5 0
+  transport input ssh
+  access-class 10 in
+  login local
+```
+
+# GRE
+
+```
+R(config)#interface tunnel 0
+BR(config-if)#ip address 172.16.34.4 255.255.255.240
+BR(config-if)#tunnel source ethernet 0/0
+BR(config-if)#tunnel destination 172.16.23.3
+```
+
+# IPSec
+
+## GRE/transport mode
+
+```
+crypto isakmp policy 10
+ encr aes 256
+ hash sha512
+ authentication pre-share
+ group 15
+ lifetime 7200
+crypto isakmp key cisco123 address 172.16.23.3    
+!
+crypto ipsec transform-set AES_SHA esp-aes 256 esp-sha512-hmac 
+ mode transport
+!
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set AES_SHA 
+
+interface Tunnel0
+ ip address 172.16.34.4 255.255.255.240
+ tunnel source Ethernet0/0
+ tunnel destination 172.16.23.3
+ tunnel protection ipsec profile IPSEC_PROFILE
+```
+
+## VTI/tunnel mode
+
+```
+crypto isakmp policy 10
+ encr aes 256
+ hash sha512
+ authentication pre-share
+ group 15
+ lifetime 7200
+crypto isakmp key cisco123 address 172.16.23.3    
+!
+crypto ipsec transform-set AES_SHA esp-aes 256 esp-sha512-hmac 
+ mode tunnel <-- diff
+!
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set AES_SHA 
+
+interface Tunnel0
+ ip address 172.16.34.4 255.255.255.240
+ tunnel source Ethernet0/0
+ tunnel mode ipsec ipv4 <-- add
+ tunnel destination 172.16.23.3
+ tunnel protection ipsec profile IPSEC_PROFILE
+```

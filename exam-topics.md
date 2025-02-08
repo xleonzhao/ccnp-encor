@@ -54,7 +54,7 @@
   * 3.4.a Interpret network time protocol configurations such as NTP and PTP
   * 3.4.b Configure NAT/PAT
   * 3.4.c Configure first hop redundancy protocols, such as HSRP, VRRP
-  * 3.4.d Describe multicast protocols, such as RPF check, PIM and IGMP v2/VTP3
+  * 3.4.d Describe multicast protocols, such as RPF check, PIM and IGMP v2/v3
 
 ## 4.0 Network Assurance
 * 4.1 Diagnose network problems using tools such as debugs, conditional debugs, traceroute, ping, SNMP, and syslog

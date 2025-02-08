@@ -1,5 +1,6 @@
 - [Network Programmability Concepts](#network-programmability-concepts)
   - [API](#api)
+    - [REST API security](#rest-api-security)
     - [Cisco DNA Center APIs](#cisco-dna-center-apis)
     - [Cisco vManage APIs](#cisco-vmanage-apis)
   - [Data Models and Supporting Protocols](#data-models-and-supporting-protocols)
@@ -43,8 +44,8 @@
 * Representational State Transfer (REST)
   * RESTful APIs
   * CRUD ops
-    * POST: CREATE
     * GET: READ
+    * POST: CREATE
     * PUT: replace data / UPDATE
     * PATCH: append data / UPDATE
     * DELETE: remove data / DELETE
@@ -56,10 +57,29 @@
   * key / value pair
 * HTTP status codee
   * 201: Created
-  * 400: Bad request
-  * 401: Unauthorized
-  * 403: Forbidden
+  * __400__: Bad request
+    * client side issue
+  * __401__: Unauthorized
+    * failed user authentication
+  * __403__: Forbidden
+    * maybe authenticated but access denied
   * 405: not allowed/supported
+
+### REST API security
+
+* Authentication
+  * basic authentication
+    * cisco DNA center
+  * token
+    * after successful auth.
+    * valid per session
+* Authorization
+  * or 403
+* Confidentiality
+  * HTTPS/TLS
+* Availability
+  * rate limiting
+* ACL
 
 ### Cisco DNA Center APIs
 
@@ -97,7 +117,7 @@
 
 * RFC 6020
 * an alternative to SNMP MIB
-* Data models are used
+* data models are used
   * to describe whatever can be configured on a device
   * everything that can be monitored on a device
   * all the administrative actions that can be executed on a device, such as resetting counters or rebooting the device
@@ -203,12 +223,6 @@ xml:ns:netconf:base:1.0">
 
 * RFC 8040
 * provide a RESTful API experience
-* HTTP methods and CRUD operations
-  * GET
-  * POST
-  * PUT
-  * DELETE
-  * OPTIONS
 * use either JSON or XML
 
 ```

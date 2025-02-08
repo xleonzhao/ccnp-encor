@@ -21,10 +21,12 @@
 ## Autonomous System
 
 * not same BGP AS
-* A router can run multiple EIGRP processes. 
-* Each process operates under the context of an autonomous system, which represents a common routing domain / AS.
-  * ASes are isolated
-* Routers within the same domain use the same metric calculation formula and exchange routes only with members of the same AS
+* each AS represents a common routing domain
+  * routers within the same AS use the same metric calculation formula
+  * routers only can form neighborhood if they configured with same AS
+  * routers exchange routes only with members of the same AS
+* different ASes are isolated from each other
+* A router can run multiple EIGRP processes
 
 ## Terminology
 

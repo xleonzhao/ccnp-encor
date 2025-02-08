@@ -260,13 +260,13 @@
 
 ### Cisco Secure Firewall (NGFW)
 
-* industry’s first fully integrated, threat-focused NGFW with unified management
-  * integrating Cisco integrated ASA software with the Cisco Secure IPS services software
 * per Gartner, an NGFW firewall must include
   * Standard firewall capabilities such as stateful inspection
   * An integrated IPS
   * Application-level inspection (to block malicious or risky apps)
   * The ability to leverage external security intelligence to address evolving security threats
+* industry’s first fully integrated, threat-focused NGFW with unified management
+  * integrating Cisco integrated ASA (Adaptive Security Appliance) software with the Cisco Secure IPS services software
 * Cisco Secure Firewall is available in the following form factors:
   * Cisco Secure Firewall Appliances
   * Cisco Secure Industrial Security Appliance (ISA)
@@ -277,7 +277,6 @@
 * software
   * ASA software image
     * standard legacy firewall
-    * Adaptive Security Appliance
   * ASA software image with Cisco Secure IPS software image (FirePOWER NGIPS)
     * only on 5500-X appliances (except the 5585-X)
   * Firepower Threat Defense (FTD) software image
@@ -469,6 +468,7 @@
     * mutual authentication
     * need install certs on supplicant
 * EAP tunneled TLS authentication methods
+  * `tunnel`: a protected TLS session
   * Protected Extensible Authentication Protocol (PEAP)
     * only server need install certs
     * use inner auth. method to authenticate client
@@ -654,10 +654,9 @@
 ### MACsec
 
 * 802.1AE
-
-* hop-by-hop
-  * only between MACsec peers
-  * then decrypted to allow switches to look into SGT etc
+  * hop-by-hop encryption
+    * only between MACsec peers / switches
+    * then decrypted to allow switches to look into SGT etc
 * two keying protocols
   * Security Association Protocol (SAP)
     * cisco proprietary

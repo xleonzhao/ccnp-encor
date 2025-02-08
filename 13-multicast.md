@@ -176,7 +176,9 @@
 
 ## IGMPv3
 
-* receiver can specify which source it want to receive multicast stream
+* allows receivers to specify the source(s) of multicast traffic
+  * v2 only can specify the multicast group, no source
+  * used by SSM
 * new field in meembership query message
 * new type: v3 membership report
 * two modes:

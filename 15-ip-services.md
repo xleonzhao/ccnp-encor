@@ -1,6 +1,8 @@
 - [Time Synchronization (NTP)](#time-synchronization-ntp)
   - [NTP Config](#ntp-config)
   - [NTP Peers](#ntp-peers)
+  - [NTP versions](#ntp-versions)
+  - [NTP access-group](#ntp-access-group)
 - [Precision Time Protocol (PTP)](#precision-time-protocol-ptp)
   - [Three PTP modes](#three-ptp-modes)
   - [PTP Config](#ptp-config)
@@ -58,6 +60,34 @@ system poll interval is 64, last update was 1 sec ago.
 * A common scenario is to designate two devices to query a different external NTP source and then to peer their local stratum 2 NTP devices.
 * NTP peers act as clients and servers to each other, in the sense that they try to blend their time to each other.
 * The peers adjust at a maximum rate of two minutes per query, so large discrepancies take some time to correct.
+
+## NTP versions
+
+| Feature              | NTPv1 | NTPv2         | NTPv3                  | NTPv4                |
+|----------------------|-------|---------------|------------------------|----------------------|
+| Accuracy             | Low   | Moderate      | Improved               | High                 |
+| Authentication       | None  | Symmetric Key | Improved Symmetric Key | Autokey (Public Key) |
+| Leap Second Handling | No    | No            | Yes                    | Yes                  |
+| IPv6 Support         | No    | No            | No                     | Yes                  |
+| Broadcast Mode       | No    | Yes           | Yes                    | Yes                  |
+| Interleaved Mode     | No    | No            | No                     | Yes                  |
+
+## NTP access-group
+
+* `ntp access-group {peer | query-only | serve | serve-only} ACL_NUMBER_OR_NAME`
+  * Peer = "we are peer", a device is allowed to synchronize itself to remote systems that pass the access list 
+  * Serve = "I'm server", a device/router itself is not allowed to synchronize itself to remote systems that pass the access list
+  * Serve-Only = It allows synchronization requests only, but the router cannot query or be queried by them.
+  * Query-Only = It allows control queries only, but devices in ACL cannot synchronize their clocks with the router
+
+| Option                              | Allows Router to Sync from Devices | Allows Devices to Sync from Router | Allows Querying NTP Status | Use Case                                                               |
+|-------------------------------------|------------------------------------|------------------------------------|----------------------------|------------------------------------------------------------------------|
+| **Peer (`peer <ACL>`)**             | ✅ Yes                              | ✅ Yes                              | ✅ Yes                      | When routers need **bi-directional synchronization**.                  |
+| **Query-Only (`query-only <ACL>`)** | ❌ No                               | ❌ No                               | ✅ Yes                      | When devices should only **monitor NTP status**, not sync.             |
+| **Serve (`serve <ACL>`)**           | ❌ No                               | ✅ Yes                              | ✅ Yes                      | When the router acts as an **NTP server** but cannot sync from others. |
+| **Serve-Only (`serve-only <ACL>`)** | ❌ No                               | ✅ Yes                              | ❌ No                       | When the router **only** provides time and **blocks queries**.         |
+        |
+
 
 # Precision Time Protocol (PTP)
 
@@ -146,6 +176,7 @@ R1#
 ## Hot Standby Router Protocol (HSRP)
 
 * cisco proprietary
+  * late RFC2281, but an informative rfc
 * provides routing redundancy for IP hosts on an Ethernet network configured with a default gateway IP address
 * virtual IP/MAC is configured on each HSRP-enabled interface
   * per HSRP group

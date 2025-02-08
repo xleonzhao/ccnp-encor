@@ -325,7 +325,7 @@ R1# show privilege
 line con 0
   ! 5 min 0 sec
   exec-timeout 5 0
-  line vty 0 4
+line vty 0 4
   ! 2 min 30 sec
   exec-timeout 2 30
   ! disable EXEC timeout
@@ -367,6 +367,9 @@ line vty 4
 
 * configure `hostname` and `domain-name`
 * generate rsa keys
+  * hostname
+  * domain name
+  * keygen
 
 ```
 R1(config)# hostname R1
@@ -493,6 +496,7 @@ aaa authentication login default group ISE-TACACS+ local
 aaa authentication login CONSOLE-CUSTOM-AUTHENTICATION-LIST local line enable
 aaa authentication enable default group ISE-TACACS+ enable
 aaa authorization exec default group ISE-TACACS+ if-authenticated
+! define a named method list for EXEC 
 aaa authorization exec CONSOLE-CUSTOM-EXEC-AUTHORIZATION-LIST none
 aaa authorization commands 0 CONSOLE-CUSTOM-COMMAND-AUTHORIZATION-LIST none
 aaa authorization commands 1 CONSOLE-CUSTOM-COMMAND-AUTHORIZATION-LIST none

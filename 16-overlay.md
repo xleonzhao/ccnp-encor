@@ -8,9 +8,9 @@
     - [Authentication header (AH)](#authentication-header-ah)
     - [Encapsulating Security Payload (ESP)](#encapsulating-security-payload-esp)
       - [Two modes of transport](#two-modes-of-transport)
-    - [Diffie-Hellman (DH)](#diffie-hellman-dh)
     - [Transform Sets](#transform-sets)
       - [HMAC](#hmac)
+      - [Diffie-Hellman (DH)](#diffie-hellman-dh)
   - [Internet Key Exchange / IKEv1](#internet-key-exchange--ikev1)
     - [Phase 1 (Main Mode)](#phase-1-main-mode)
     - [Phase 1 (Aggressive mode)](#phase-1-aggressive-mode)
@@ -169,18 +169,6 @@ R1# show interfaces tunnel 100 | include Tunnel.*is|Keepalive|Tunnel s|Tunnel p
 
 ![](img/2024-11-06-11-53-10.png)
 
-### Diffie-Hellman (DH)
-
-* An asymmetric key exchange protocol that enables two peers to establish a shared secret key
-  * Agree on a public key: Alice and Bob agree on a large prime number, \(p\), and a generator, \(g\).
-  * Choose private keys: Alice chooses a secret integer, \(a\), as her private key. Bob chooses his own private key, \(b\).  
-  * Calculate public keys: Alice calculates her public key as \(g^{a}\bmod p\). Bob calculates his public key in the same way.  
-  * Compute the shared secret: Alice and Bob can both compute the same shared secret number by combining their private keys with the other party's public key. The shared secret is \(g^{ab}\bmod p\).  
-  * Diffie-Hellman Key Agreement Method (RFC 2631)
-
-* Cisco recommends avoiding DH groups 1, 2, and 5 and instead using DH groups 14 and higher.
-  * group 1 uses 768 bits, group 2 uses 1024, and group 5 uses 1536
-
 ### Transform Sets
 
 * a combination of security protocols and algorithms
@@ -193,6 +181,18 @@ R1# show interfaces tunnel 100 | include Tunnel.*is|Keepalive|Tunnel s|Tunnel p
 * verify both the integrity and authenticity of a message
 * uses a cryptographic hash function in combination with a secret key to produce a hash value
 * requires a secret cryptographic key shared between the sender and the receiver a prior
+
+#### Diffie-Hellman (DH)
+
+* An asymmetric key exchange protocol that enables two peers to establish a shared secret key
+  * Agree on a public key: Alice and Bob agree on a large prime number, \(p\), and a generator, \(g\).
+  * Choose private keys: Alice chooses a secret integer, \(a\), as her private key. Bob chooses his own private key, \(b\).  
+  * Calculate public keys: Alice calculates her public key as \(g^{a}\bmod p\). Bob calculates his public key in the same way.  
+  * Compute the shared secret: Alice and Bob can both compute the same shared secret number by combining their private keys with the other party's public key. The shared secret is \(g^{ab}\bmod p\).  
+  * Diffie-Hellman Key Agreement Method (RFC 2631)
+
+* Cisco recommends avoiding DH groups 1, 2, and 5 and instead using DH groups 14 and higher.
+  * group 1 uses 768 bits, group 2 uses 1024, and group 5 uses 1536
 
 ## Internet Key Exchange / IKEv1
 

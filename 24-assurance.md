@@ -10,7 +10,7 @@
   - [Conditional Debugging](#conditional-debugging)
     - [`debug ip packet`](#debug-ip-packet)
   - [SNMP](#snmp)
-  - [syslog](#syslog)
+  - [Syslog](#syslog)
 - [NetFlow and Flexible NetFlow](#netflow-and-flexible-netflow)
   - [config](#config)
   - [Flexible Netflow](#flexible-netflow)
@@ -161,10 +161,10 @@ R1(config)# snmp-server enable traps config
 R1(config)# snmp-server host 192.168.14.100 traps READONLY
 ```
 
-## syslog
+## Syslog
 
 * ensure NTP is enabled to make time sync'd
-* 7 levels of log levels, similar to Linux kernel
+* 7 levels of log levels, same as Linux kernel
 
 ![](img/2025-01-14-16-25-23.png)
 
