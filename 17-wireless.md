@@ -179,7 +179,7 @@
   * $dB=-10$: power of interest is 1/10 of the reference
 
 * LZ 
-  * if dB=20, then power difference is 2 magnitude
+  * if $dB=20$, then power difference is 2 magnitude
     $$
     20=10log_{10}(\frac{p1}{p2}) \newline
     2=log_{10}(\frac{p1}{p2}) \newline

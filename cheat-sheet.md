@@ -15,18 +15,22 @@
 - [SD-WAN](#sd-wan)
 - [SDN](#sdn)
 - [Automation](#automation)
+- [cisco password type](#cisco-password-type)
 
 # Protocol Numbers
 
 | Protocol | Number |
 |:--|:--|
+| ICMP | 1
+| IGMPv2 | 2
+| TCP | 6
+| UDP | 17
+| GRE | 47
+| IPSEC ESP | 50
+| IPSEC AH | 51
 | EIGRP | 88
 | OSPF | 89
-| IGMPv2 | 2
 | PIM | 103
-| IPSEC AH | 51
-| IPSEC ESP | 50
-| GRE | 47
 | PAgP | 0x0104
 
 # Special IP Addresses
@@ -35,8 +39,8 @@
 |:--|:--|
 | OSPFv2 AllSPFRouters | 224.0.0.5 01:00:5E:00:00:05
 | OSPFv2 AllDRouters | 224.0.0.6 01:00:5E:00:00:06
-| OSPFv3 AllSPFRouters | FF02::05: | 
-| OSPFv3 AllDRouters | FF02::06: |
+| OSPFv3 AllSPFRouters | FF02::05 | 
+| OSPFv3 AllDRouters | FF02::06 |
 | All PIM routers | 224.0.0.13 |
 | Auto-RP/Cisco-RP-announce | 224.0.1.39 |
 | Auto-RP/Cisco-RP-Discovery | 224.0.1.40 |
@@ -169,3 +173,24 @@
 |Terminology|Modules and manifests|Cookbooks and recipes|Playbooks and plays|Pillars and grains
 |Support for large-scale deployments|Yes|Yes|Yes|Yes
 |Agentless version|Puppet Bolt|N/A|Yes|Salt SSH
+
+# cisco password type
+
+* type 0  
+  * plaintext
+  * `enable password`
+  * `username password`
+  * `line password`
+* type 7
+  * very weak
+  * `service password-encryption`
+* type 5
+  * use MD5 hashing
+  * still weak
+  * `enable secret`
+* type 8
+  * better hashing
+  * recommended
+* type 9
+  * use the `scrypt` hashing algorithm and password salting
+  * recommended by cisco

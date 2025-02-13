@@ -6,7 +6,6 @@
   - [Task 2: Configure Trunks](#task-2-configure-trunks)
   - [Task 3: Assign VLANs](#task-3-assign-vlans)
   - [Task 4: Routing Between VLAN's](#task-4-routing-between-vlans)
-    - [config vlan interface / SVI on switch](#config-vlan-interface--svi-on-switch)
     - [config a subinterface on router](#config-a-subinterface-on-router)
     - [config dhcp](#config-dhcp)
   - [Task 6: Internet Access (optional)](#task-6-internet-access-optional)
@@ -128,13 +127,6 @@ switchport access vlan 200
 * but for hosts in different vlans to talk to each other, we must goto layer 3 and start IP routing
   * router will be the default gw, and dhcp server
 
-### config vlan interface / SVI on switch
-
-```
-interface VLAN70
- ip address 192.168.70.1 255.255.255.0
-```
-
 ### config a subinterface on router
 
 ```
@@ -143,11 +135,9 @@ interface Ethernet0/0
 interface Ethernet0/0.10
  encapsulation dot1q 10
  ip address 192.168.10.1 255.255.255.0
- ip nat inside
 interface Ethernet0/0.60
  encapsulation dot1q 60
  ip address 192.168.60.1 255.255.255.0
- ip nat inside
 ```
 
 ### config dhcp
@@ -176,11 +166,6 @@ ip dhcp pool VLAN60
 ```
 ! first configure inside/outside nat interfaces
 !
-interface ethernet 0/1
- ip nat outside
- ip address dhcp
- no shutdown
-
 interface ethernet 0/0.10
  ip nat inside
 
