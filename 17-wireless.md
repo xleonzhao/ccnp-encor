@@ -410,7 +410,7 @@
     * multiple APs in bridge mode can form a mesh network 
   * Flex+Bridge
     * FlexConnect operation is enabled on a mesh AP
-  * Se-Connect
+  * SE-Connect
     * spectrum analysis to analyze interferences
       * MetaGeek Chanalyzer
       * Cisco Spectrum Expert
@@ -526,9 +526,10 @@
       * UDP port **5246**
   * DHCP and DNS information to suggest a list of controllers
     * DHCP option 43
+      * ex: `option 43 hex F104.AC10.3205`
+      * > The Option 43 hexadecimal string is assembled as a sequence of the TLV values for the Option 43 suboption. Type is always the suboption code 0xF1. Length is the number of controller management IP addresses times 4 in hex. Value is the IP address of the controller listed sequentially in hex. On this question, there is 1 controller with management interface IP addresses 172.16.50.5/24. The type is 0xf1. The length is 1 * 4 = 8 = 0x04. The mgmt IP addresses 172.16.50.5 translate to ac.10.32.05 (0xac103205). When the string is assembled, it yields f108c0a80a05c0a80a14. The Cisco IOS command that is added to the DHCP scope is: `option 43 hex f104ac103205`
     * dns name: **CISCO-CAPWAP-CONTROLLER.localdomain**
   * Plug-and-play with Cisco DNA Center
-
 #### router helper
 
 * if AP and WLC on different subnets

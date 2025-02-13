@@ -293,11 +293,11 @@
     * connects APs and wireless endpoints to the SDA fabric
   * Intermediate nodes
     * intermediate routers or extended switches do not provide any sort of SD-Access fabric role other than underlay services.
+* the recommended MTU value available on devices operating in a fabric role is 9100.
 
 ![](img/2024-11-21-11-26-34.png)
 
 > the core layer routers in this figure are acting as fabric border nodes and control plane nodes
-
 ##### Fabric Edge Nodes
 
 * function:

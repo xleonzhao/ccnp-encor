@@ -1,6 +1,8 @@
 - [Protocol Numbers](#protocol-numbers)
 - [Special IP Addresses](#special-ip-addresses)
 - [Winner selection](#winner-selection)
+  - [Lower wins](#lower-wins)
+  - [Higher wins](#higher-wins)
 - [ACL](#acl)
 - [Metric calculation](#metric-calculation)
 - [EtherChannel](#etherchannel)
@@ -44,16 +46,22 @@
 
 # Winner selection
 
+## Lower wins
+
 * STP root bridge election:
   * the **lowest priority** and then the **lowest MAC** address
-* HSRP/VRRP: 
-  * higher priority wins, then highest IP wins
-  * default: 100
 * Routing
   * lower AD wins
     * 0: directly connected routes
+
+## Higher wins
+
+* HSRP/VRRP: 
+  * higher priority wins, then highest IP wins
+  * default: 100
 * OSPF DR election
   * higher interface `ip ospf priority N` wins
+
 # ACL
 
 * numbered ACL: 1–99 and 1300–1999

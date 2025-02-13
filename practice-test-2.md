@@ -427,3 +427,70 @@ Router(config)# aaa authorization config-commands
   * 501 Not Implemented
 
 > The correct answer is 415 Unsupported Media Type. The REST API client error code 415 is returned when the client sent a request body in a format that the server does not support.
+
+---
+
+* network design concept
+
+> * Self-healing = Continuously on and available
+> * Self-defending = Protects the organization and its users
+> * Self-optimizing = Adapts to changing needs, beyond the limits of basic standards
+> * Self-aware = Encourages change through insight into network activity. 
+> The modern enterprise network should provide self-healing capabilities to ensure its continuous availability, self-defending capabilities to secure itself and the users, self-optimizing to improve itself following the evolved advanced standards, and self-aware to adapt itself per observed network activity.
+
+* Which term is the 3-bit field in the QoS control field of wireless 802.11 MAC frames?
+* CoS
+* ToS
+* DSCP
+* class selector
+* TID
+
+> The correct answer is TID. TID is a term that is used to describe a 3-bit field in the QoS control field of wireless frames (802.11 MAC frame). Values correspond approximately, but not exactly, to Ethernet CoS values and meanings. TID is used for wireless Ethernet connections, and CoS is used for wired Ethernet connections.
+
+* Which Nextgen firewall (NGFW) feature moves the most commonly used proxy server function into the firewall?
+  * Context Awareness
+  * Application Visibility
+  * Cisco URL Filtering
+  * Cisco Intrusion Prevention System
+
+> The correct answer is Cisco URL Filtering. This feature moves the most commonly used proxy server function into the firewall itself and may take advantage of URL classification and website reputation scores.
+
+* Which module works with Cisco AnyConnect to enforce a policy for endpoints that connect to the network via remote-access VPNs?
+  * Cisco WSA AnyConnect
+  * Cisco ISE posture
+  * Cisco ASA posture
+  * Cisco Catalyst AnyConnect
+
+> The correct answer is Cisco ASA posture module. The Cisco ASA posture module performs server-side evaluation where the appliance asks only for a list of endpoint attributes. Cisco AnyConnect gathers the attribute values and sends them back to the Cisco ASA appliance. The appliance then evaluates the values to determine if the client is allowed to create a remote-access connection to the network.
+
+* Python
+  * Strings = sequences of character data 
+  * Numbers = integers allowing for mathematical operation to be performed directly in code 
+  * Lists = containers used to store multiple data at the same time 
+  * Dictionaries = use key value pairs to match keys to their value 
+  * Booleans = values and operators used in code 
+  * Files = objects used by Python
+
+* When using the Python Requests library, which two HTTP requests might result in overwriting interface attributes that are not defined in the message body? (Choose two.)
+  * APPEND
+  * GET
+  * PATCH
+  * POST
+  * PUT
+  * STORE
+
+> The correct answers are POST and PUT. The differences between POST, PUT, and PATCH requests are important to understand. Usually, you do not want to POST or PUT resources when your intent is to update the attributes of those resources. For example, when updating an interface, a misused POST or PUT request could result in overwriting interface attributes that are not defined in the message body. Such action could make the device unreachable, and therefore unmanageable.
+> * POST: create a new record
+> * PUT: replace the whole record, or create a new one if not exist
+> * PATCH: update one the specified portion of a record
+> * Idempotent: POST is not, PUT is.
+> means, POST multiple identical requests will create duplicates, while PUI will not
+
+* Through which platform can Cisco SD-WAN be accessed using a REST API?
+  * Cisco DNA Center
+  * Cisco vManage NMS
+  * Wireless LAN Controller GUI
+  * Network Services Manager
+
+> The correct answer is Cisco vManage NMS. Cisco SD-WAN provides a REST API that can be accessed through vManage NMS. The API provides calls for retrieving real-time and static information about the Cisco SD-WAN overlay network and the devices in the network, and for uploading device configuration templates and other configuration-related information. Using the RESTful API, you can design a custom portal to interact with the vManage NMS.
+> Both APIs allow network automation, monitoring, and policy enforcement, but Cisco DNA Center is focused on enterprise networks, while vManage is specifically for SD-WAN.

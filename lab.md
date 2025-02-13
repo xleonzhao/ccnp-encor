@@ -356,6 +356,21 @@ R2(config-applet)#action 4.0 cli command "no ip route 8.8.8.8 255.255.255.255 10
 R2#debug event manager action cli
 ```
 
+* another EEM example
+
+```
+R1#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#event manager applet save-and-log
+R1(config-applet)#event syslog pattern "%SYS-5-CONFIG_I: Configured from "
+R1(config-applet)#action 10 cli command "enable"
+R1(config-applet)#action 20 cli command "show clock | append unix:config-changes"
+R1(config-applet)#action 30 cli command "show start | append unix:config-changes"
+R1(config-applet)#action 40 cli command "write memory"
+R1(config-applet)#action 50 cli command "show start | append unix:config-changes"
+R1(config-applet)#end
+```
+
 # NETCONF
 
 * https://user.pnetlab.com/store/labs/detail?id=16000809382486
