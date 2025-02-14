@@ -9,7 +9,7 @@
   - [Part VIII - Security](#part-viii---security)
   - [Part IX - SDN](#part-ix---sdn)
 
-# Implementing Cisco Enterprise Network Core Technologies (ENCORE 350-401)
+# Implementing Cisco Enterprise Network Core Technologies (350-401 ENCOR)
 
 ## Part I - Forwarding
 
