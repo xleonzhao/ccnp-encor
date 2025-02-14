@@ -7,19 +7,20 @@
   - [Task 3: Assign VLANs](#task-3-assign-vlans)
   - [Task 4: Routing Between VLAN's](#task-4-routing-between-vlans)
     - [config a subinterface on router](#config-a-subinterface-on-router)
-    - [config dhcp](#config-dhcp)
+    - [config DHCP](#config-dhcp)
   - [Task 6: Internet Access (optional)](#task-6-internet-access-optional)
-    - [on router](#on-router)
+    - [config NAT](#config-nat)
   - [misc.](#misc)
     - [config routed port](#config-routed-port)
 - [Netflow](#netflow)
 - [CoPP](#copp)
 - [VRF](#vrf)
-- [HSRP/VRRP](#hsrpvrrp)
+- [HSRP](#hsrp)
 - [VRRP](#vrrp)
 - [EtherChannel](#etherchannel)
 - [MST](#mst)
 - [BGP](#bgp)
+- [OSPF](#ospf)
 - [IP SLA and EEM](#ip-sla-and-eem)
 - [NETCONF](#netconf)
   - [get it running](#get-it-running)
@@ -140,7 +141,7 @@ interface Ethernet0/0.60
  ip address 192.168.60.1 255.255.255.0
 ```
 
-### config dhcp
+### config DHCP
 
 ```
 ip dhcp excluded-address 192.168.10.1 192.168.10.10
@@ -161,7 +162,7 @@ ip dhcp pool VLAN60
 
 ## Task 6: Internet Access (optional)
 
-### on router
+### config NAT
 
 ```
 ! first configure inside/outside nat interfaces
@@ -244,7 +245,7 @@ R1(config-if)# ip address 10.0.3.1 255.255.255.0
 R1(config)# ip route vrf MGMT 0.0.0.0 0.0.0.0 10.10.1.1
 ```
 
-# HSRP/VRRP
+# HSRP
 
 ```
 SW2(config)# interface vlan 10
@@ -313,6 +314,14 @@ router bgp <ASN>
   neighbor <ip> update-source Loopback0 
   address-family ipv4
     network <ip> mask <mask>
+```
+
+# OSPF
+
+```
+router ospf 1
+  router-id 1.1.1.1
+  network <interface ip address> <interface ip mask>
 ```
 
 # IP SLA and EEM
