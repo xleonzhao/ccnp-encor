@@ -732,4 +732,5 @@ Employee1:
 |Terminology|Modules and manifests|Cookbooks and recipes|Playbooks and plays|Pillars and grains
 |Support for large-scale deployments|Yes|Yes|Yes|Yes
 |Agentless version|Puppet Bolt|N/A|Yes|Salt SSH
+|Declarative/Procedural| Declarative | Procedural | Mostly Procedural | Mostly Declarative
 
