@@ -12,6 +12,7 @@
     - [config NAT](#config-nat)
   - [misc.](#misc)
     - [config routed port](#config-routed-port)
+- [Onboarding device](#onboarding-device)
 - [Netflow](#netflow)
 - [CoPP](#copp)
 - [VRF](#vrf)
@@ -190,6 +191,25 @@ ip nat inside source list 1 interface ethernet 0/1 overload
 ```
 no switchport
 ip address 192.168.100.1 255.255.255.0
+```
+
+# Onboarding device
+
+```
+! add user
+user noc priv 15 secret xxxx
+! enable ssh
+hostname r1
+ip domain name exam.lan
+crypt key gen rsa
+! 
+line vty 0 4
+  login local
+  transport input ssh
+! mgmt interface
+interface e0/1
+  ip address x.x.x.x y.y.y.y
+  no shutdown
 ```
 
 # Netflow
