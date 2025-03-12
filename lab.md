@@ -13,6 +13,7 @@
   - [misc.](#misc)
     - [config routed port](#config-routed-port)
 - [Onboarding device](#onboarding-device)
+- [line](#line)
 - [Netflow](#netflow)
 - [CoPP](#copp)
 - [VRF](#vrf)
@@ -26,7 +27,6 @@
 - [NETCONF](#netconf)
   - [get it running](#get-it-running)
   - [use netconf](#use-netconf)
-- [line](#line)
 - [GRE](#gre)
 - [IPSec](#ipsec)
   - [GRE/transport mode](#gretransport-mode)
@@ -195,6 +195,8 @@ ip address 192.168.100.1 255.255.255.0
 
 # Onboarding device
 
+* minimal config
+
 ```
 ! add user
 user noc priv 15 secret xxxx
@@ -206,10 +208,25 @@ crypt key gen rsa
 line vty 0 4
   login local
   transport input ssh
-! mgmt interface
+! get at least one interface up for net connectivity
 interface e0/1
   ip address x.x.x.x y.y.y.y
   no shutdown
+```
+
+# line
+
+```
+access-list 10 permit 192.168.100.1 255.255.255.0
+!
+line con
+  exec-timeout 5 0
+  login local
+line vty 0 9
+  exec-timeout 5 0
+  transport input ssh
+  access-class 10 in
+  login local
 ```
 
 # Netflow
@@ -431,25 +448,6 @@ R1(config-applet)#end
 </get>
 </rpc>
 ]]>]]>
-```
-
-# line
-
-```
-username cisco secret cisco
-hostname R1
-ip domain-name cisco.com
-crypto key generate rsa
-access-list 10 permit 192.168.100.1 255.255.255.0
-!
-line con
-  exec-timeout 5 0
-  login local
-line vty 0 9
-  exec-timeout 5 0
-  transport input ssh
-  access-class 10 in
-  login local
 ```
 
 # GRE
